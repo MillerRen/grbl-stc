@@ -54,11 +54,11 @@
 #endif
 
 //为Grbl设置和参数定义EEPROM存储器地址位置值
-//注：Atmega328p具有1KB EEPROM。上半部分保留用于参数和启动脚本。下半部分包含全球设置和未来发展空间。
+//注：STC8H系列有比较大的EEPROM。可以分4个扇区2K存数据。
 #define EEPROM_ADDR_GLOBAL         1U
 #define EEPROM_ADDR_PARAMETERS     512U
-#define EEPROM_ADDR_STARTUP_BLOCK  768U
-#define EEPROM_ADDR_BUILD_INFO     942U
+#define EEPROM_ADDR_STARTUP_BLOCK  1024U
+#define EEPROM_ADDR_BUILD_INFO     1536U
 
 //定义坐标参数的EEPROM地址索引
 #define N_COORDINATE_SYSTEM 6  //支持的工作坐标系数量（从索引1开始）
