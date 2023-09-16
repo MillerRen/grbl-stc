@@ -240,8 +240,8 @@ uint8_t gc_execute_line(char *line)
         
         //检查当前块中每个模式组是否有多个命令冲突
         //注意：如果命令有效，则始终指定变量“word_bit”。
-        if ( bit_istrue(command_words,bit(word_bit)) ) { FAIL(STATUS_GCODE_MODAL_GROUP_VIOLATION); }
-        command_words |= bit(word_bit);
+        if ( bit_istrue(command_words,BIT(word_bit)) ) { FAIL(STATUS_GCODE_MODAL_GROUP_VIOLATION); }
+        command_words |= BIT(word_bit);
         break;
 
       case 'M':
@@ -290,8 +290,8 @@ uint8_t gc_execute_line(char *line)
 
         //检查当前块中每个模式组是否有多个命令冲突
         //注意：如果命令有效，则始终指定变量“word_bit”。
-        if ( bit_istrue(command_words,bit(word_bit)) ) { FAIL(STATUS_GCODE_MODAL_GROUP_VIOLATION); }
-        command_words |= bit(word_bit);
+        if ( bit_istrue(command_words,BIT(word_bit)) ) { FAIL(STATUS_GCODE_MODAL_GROUP_VIOLATION); }
+        command_words |= BIT(word_bit);
         break;
 
       //注意：所有剩余字母都指定值。
@@ -328,14 +328,14 @@ uint8_t gc_execute_line(char *line)
         }
 
         //注意：如果非命令字母有效，则始终指定变量“word_bit”。
-        if (bit_istrue(value_words,bit(word_bit))) { FAIL(STATUS_GCODE_WORD_REPEATED); } //[字重复]
+        if (bit_istrue(value_words,BIT(word_bit))) { FAIL(STATUS_GCODE_WORD_REPEATED); } //[字重复]
         
         //检查字F、N、P、T和S的无效负值。
         //注意：这里进行负值检查只是为了提高代码效率。
-        if ( bit(word_bit) & (bit(WORD_F)|bit(WORD_N)|bit(WORD_P)|bit(WORD_T)|bit(WORD_S)) ) {
+        if ( BIT(word_bit) & (BIT(WORD_F)|BIT(WORD_N)|BIT(WORD_P)|BIT(WORD_T)|BIT(WORD_S)) ) {
           if (value < 0.0) { FAIL(STATUS_NEGATIVE_VALUE); } //[字值不能为负]
         }
-        value_words |= bit(word_bit); //指示指定参数的标志。
+        value_words |= BIT(word_bit); //指示指定参数的标志。
 
     }
   }
@@ -368,11 +368,11 @@ uint8_t gc_execute_line(char *line)
   }
 
   //检查有效的行号N值。
-  if (bit_istrue(value_words,bit(WORD_N))) {
+  if (bit_istrue(value_words,BIT(WORD_N))) {
     //行号值不能小于零（完成）或大于最大行号。
     if (gc_block.values.n > MAX_LINE_NUMBER) { FAIL(STATUS_GCODE_INVALID_LINE_NUMBER); } //[超过最大行号]
   }
-  // bit_false(value_words,bit(WORD_N)); // NOTE: Single-meaning value word. Set at end of error-checking.
+  // bit_false(value_words,BIT(WORD_N)); // NOTE: Single-meaning value word. Set at end of error-checking.
 
   //在错误检查结束时跟踪未使用的字。
   //注意：在错误检查结束时，单个意义值的单词会一次全部删除，因为它们总是在出现时使用。
@@ -384,7 +384,7 @@ uint8_t gc_execute_line(char *line)
   //从G93切换到G94后，未定义进给速度。
   //注意：对于点动，忽略先前的进给速度模式。强制执行G94并检查所需的F字。
   if (gc_parser_flags & GC_PARSER_JOG_MOTION) {
-    if (bit_isfalse(value_words,bit(WORD_F))) { FAIL(STATUS_GCODE_UNDEFINED_FEED_RATE); }
+    if (bit_isfalse(value_words,BIT(WORD_F))) { FAIL(STATUS_GCODE_UNDEFINED_FEED_RATE); }
     if (gc_block.modal.units == UNITS_MODE_INCHES) { gc_block.values.f *= MM_PER_INCH; }
   } else {
     if (gc_block.modal.feed_rate == FEED_RATE_MODE_INVERSE_TIME) { // = G93
@@ -392,7 +392,7 @@ uint8_t gc_execute_line(char *line)
       //注：G38也可以反时限运行，但未定义为错误。此处添加了缺少的F字检查。
       if (axis_command == AXIS_COMMAND_MOTION_MODE) {
         if ((gc_block.modal.motion != MOTION_MODE_NONE) && (gc_block.modal.motion != MOTION_MODE_SEEK)) {
-          if (bit_isfalse(value_words,bit(WORD_F))) { FAIL(STATUS_GCODE_UNDEFINED_FEED_RATE); } //[F单词缺失]
+          if (bit_isfalse(value_words,BIT(WORD_F))) { FAIL(STATUS_GCODE_UNDEFINED_FEED_RATE); } //[F单词缺失]
         }
       }
       //注意：从G94切换到G93后，检查是否要传递F字似乎是多余的。      
@@ -408,7 +408,7 @@ uint8_t gc_execute_line(char *line)
     
       //-在单位/毫米模式下：如果F字已通过，请确保值为毫米/分钟，否则按最后状态值。
       if (gc_state.modal.feed_rate == FEED_RATE_MODE_UNITS_PER_MIN) { // Last state is also G94
-        if (bit_istrue(value_words,bit(WORD_F))) {
+        if (bit_istrue(value_words,BIT(WORD_F))) {
           if (gc_block.modal.units == UNITS_MODE_INCHES) { gc_block.values.f *= MM_PER_INCH; }
         } else {
           gc_block.values.f = gc_state.feed_rate; //推送最后状态进给速率
@@ -416,14 +416,14 @@ uint8_t gc_execute_line(char *line)
       } //否则，从G93切换到G94，所以不要推最后状态进给速率。其未定义或传递的F字值。
     }
   }
-  // bit_false(value_words,bit(WORD_F)); // 注：单义值词。在错误检查结束时设置。
+  // bit_false(value_words,BIT(WORD_F)); // 注：单义值词。在错误检查结束时设置。
 
   //[4.设置主轴转速]：S为负（完成）
-  if (bit_isfalse(value_words,bit(WORD_S))) { gc_block.values.s = gc_state.spindle_speed; }
-  // bit_false(value_words,bit(WORD_S)); // 注：单义值词。在错误检查结束时设置。
+  if (bit_isfalse(value_words,BIT(WORD_S))) { gc_block.values.s = gc_state.spindle_speed; }
+  // bit_false(value_words,BIT(WORD_S)); // 注：单义值词。在错误检查结束时设置。
 
   //[5.选择工具]：不支持。只跟踪价值。T为负（完成）不是整数。大于最大刀具值。
-  // bit_false(value_words,bit(WORD_T)); // 注：单义值词。在错误检查结束时设置。
+  // bit_false(value_words,BIT(WORD_T)); // 注：单义值词。在错误检查结束时设置。
 
   //[6.更换工具]：不适用
 //[7.主轴控制]：不适用
@@ -431,18 +431,18 @@ uint8_t gc_execute_line(char *line)
   
   //[9.覆盖控制]：不受支持，仅Grbl停靠运动覆盖控制除外。
   #ifdef ENABLE_PARKING_OVERRIDE_CONTROL
-    if (bit_istrue(command_words,bit(MODAL_GROUP_M9))) { //已在解析器中设置为已启用。
-      if (bit_istrue(value_words,bit(WORD_P))) {
+    if (bit_istrue(command_words,BIT(MODAL_GROUP_M9))) { //已在解析器中设置为已启用。
+      if (bit_istrue(value_words,BIT(WORD_P))) {
         if (gc_block.values.p == 0.0) { gc_block.modal.override = OVERRIDE_DISABLED; }
-        bit_false(value_words,bit(WORD_P));
+        bit_false(value_words,BIT(WORD_P));
       }
     }
   #endif
 
   //[10.暂停]：缺少P值。P为负（完成）注：见下文。
   if (gc_block.non_modal_command == NON_MODAL_DWELL) {
-    if (bit_isfalse(value_words,bit(WORD_P))) { FAIL(STATUS_GCODE_VALUE_WORD_MISSING); } //[P单词缺失]
-    bit_false(value_words,bit(WORD_P));
+    if (bit_isfalse(value_words,BIT(WORD_P))) { FAIL(STATUS_GCODE_VALUE_WORD_MISSING); } //[P单词缺失]
+    bit_false(value_words,BIT(WORD_P));
   }
 
   //[11.设置活动平面]：不适用
@@ -468,7 +468,7 @@ uint8_t gc_execute_line(char *line)
   
   if (gc_block.modal.units == UNITS_MODE_INCHES) {
     for (idx=0; idx<N_AXIS; idx++) { //轴索引是一致的，因此可以使用循环。
-      if (bit_istrue(axis_words,bit(idx)) ) {
+      if (bit_istrue(axis_words,BIT(idx)) ) {
         gc_block.values.xyz[idx] *= MM_PER_INCH;
       }
     }
@@ -496,7 +496,7 @@ uint8_t gc_execute_line(char *line)
 //对于具有足够内存的处理器上的未来版本，所有坐标数据应存储在内存中，并仅在没有激活循环时写入EEPROM。
   
   memcpy(block_coord_system,gc_state.coord_system,sizeof(gc_state.coord_system));
-  if ( bit_istrue(command_words,bit(MODAL_GROUP_G12)) ) { //检查是否在块中调用
+  if ( bit_istrue(command_words,BIT(MODAL_GROUP_G12)) ) { //检查是否在块中调用
     if (gc_block.modal.coord_select > N_COORDINATE_SYSTEM) { FAIL(STATUS_GCODE_UNSUPPORTED_COORD_SYS); } //[大于N sys]
     if (gc_state.modal.coord_select != gc_block.modal.coord_select) {
       if (!(settings_read_coord_data(gc_block.modal.coord_select,block_coord_system))) { FAIL(STATUS_SETTING_READ_FAIL); }
@@ -524,10 +524,10 @@ uint8_t gc_execute_line(char *line)
       if (coord_select > N_COORDINATE_SYSTEM) { FAIL(STATUS_GCODE_UNSUPPORTED_COORD_SYS); } //[大于N sys]
       if (gc_block.values.l != 20) {
         if (gc_block.values.l == 2) {
-          if (bit_istrue(value_words,bit(WORD_R))) { FAIL(STATUS_GCODE_UNSUPPORTED_COMMAND); } //[G10 L2 R不受支持]
+          if (bit_istrue(value_words,BIT(WORD_R))) { FAIL(STATUS_GCODE_UNSUPPORTED_COMMAND); } //[G10 L2 R不受支持]
         } else { FAIL(STATUS_GCODE_UNSUPPORTED_COMMAND); } //[无支持的L]
       }
-      bit_false(value_words,(bit(WORD_L)|bit(WORD_P)));
+      bit_false(value_words,(BIT(WORD_L)|BIT(WORD_P)));
 
       //确定要更改的坐标系并尝试从EEPROM加载。
       if (coord_select > 0) { coord_select--; } //将P1-P6索引调整为EEPROM坐标数据索引。
@@ -539,7 +539,7 @@ uint8_t gc_execute_line(char *line)
       //预先计算坐标数据更改。
       for (idx=0; idx<N_AXIS; idx++) { //轴索引是一致的，因此可以使用循环。
       //更新仅在块中定义的轴。始终在机器坐标系中。可以更改非活动系统。
-        if (bit_istrue(axis_words,bit(idx)) ) {
+        if (bit_istrue(axis_words,BIT(idx)) ) {
           if (gc_block.values.l == 20) {
             //L20：使用编程值更新当前位置的坐标系轴（带修改器）
             
@@ -560,7 +560,7 @@ uint8_t gc_execute_line(char *line)
       //更新仅在块中定义的轴。将当前系统偏移到定义的值。
       //选择活动坐标系时不更新，但仍处于活动状态，除非G92.1将其禁用。
       for (idx=0; idx<N_AXIS; idx++) { //轴索引是一致的，因此可以使用循环。
-        if (bit_istrue(axis_words,bit(idx)) ) {
+        if (bit_istrue(axis_words,BIT(idx)) ) {
           // WPos = MPos - WCS - G92 - TLO  ->  G92 = MPos - WCS - TLO - WPos
           gc_block.values.xyz[idx] = gc_state.position[idx]-block_coord_system[idx]-gc_block.values.xyz[idx];
           if (idx == TOOL_LENGTH_OFFSET_AXIS) { gc_block.values.xyz[idx] -= gc_state.tool_length_offset; }
@@ -579,7 +579,7 @@ uint8_t gc_execute_line(char *line)
       if (axis_command != AXIS_COMMAND_TOOL_LENGTH_OFFSET ) { //TLO阻止任何轴命令。
         if (axis_words) {
           for (idx=0; idx<N_AXIS; idx++) { //轴索引是一致的，所以可以使用循环来节省闪存空间。
-            if ( bit_isfalse(axis_words,bit(idx)) ) {
+            if ( bit_isfalse(axis_words,BIT(idx)) ) {
               gc_block.values.xyz[idx] = gc_state.position[idx]; //块中没有轴字。保持相同的轴位置。
             } else {
               //根据距离模式更新指定值，如果绝对覆盖处于活动状态，则忽略。
@@ -676,15 +676,15 @@ uint8_t gc_execute_line(char *line)
 //注：圆弧跟踪需要半径和偏移，并通过错误检查预先计算。
 
           if (!axis_words) { FAIL(STATUS_GCODE_NO_AXIS_WORDS); } //[无轴字]
-          if (!(axis_words & (bit(axis_0)|bit(axis_1)))) { FAIL(STATUS_GCODE_NO_AXIS_WORDS_IN_PLANE); } //[平面中无轴字]
+          if (!(axis_words & (BIT(axis_0)|BIT(axis_1)))) { FAIL(STATUS_GCODE_NO_AXIS_WORDS_IN_PLANE); } //[平面中无轴字]
 
           //计算沿每个选定轴的位置变化
           
           x = gc_block.values.xyz[axis_0]-gc_state.position[axis_0]; //当前位置和目标之间的增量x
           y = gc_block.values.xyz[axis_1]-gc_state.position[axis_1]; //当前位置和目标之间的增量y
 
-          if (value_words & bit(WORD_R)) { //弧半径模式
-            bit_false(value_words,bit(WORD_R));
+          if (value_words & BIT(WORD_R)) { //弧半径模式
+            bit_false(value_words,BIT(WORD_R));
             if (isequal_position_vector(gc_state.position, gc_block.values.xyz)) { FAIL(STATUS_GCODE_INVALID_TARGET); } //[无效目标]
 
             //将半径值转换为适当的单位。
@@ -767,13 +767,13 @@ uint8_t gc_execute_line(char *line)
             gc_block.values.ijk[axis_1] = 0.5*(y+(x*h_x2_div_d));
 
           } else { //弧心格式偏移模式
-            if (!(ijk_words & (bit(axis_0)|bit(axis_1)))) { FAIL(STATUS_GCODE_NO_OFFSETS_IN_PLANE); } //[平面内无偏移]
-            bit_false(value_words,(bit(WORD_I)|bit(WORD_J)|bit(WORD_K)));
+            if (!(ijk_words & (BIT(axis_0)|BIT(axis_1)))) { FAIL(STATUS_GCODE_NO_OFFSETS_IN_PLANE); } //[平面内无偏移]
+            bit_false(value_words,(BIT(WORD_I)|BIT(WORD_J)|BIT(WORD_K)));
 
             //将IJK值转换为适当的单位。
             if (gc_block.modal.units == UNITS_MODE_INCHES) {
               for (idx=0; idx<N_AXIS; idx++) { //轴索引是一致的，所以可以使用循环来节省闪存空间。
-                if (ijk_words & bit(idx)) { gc_block.values.ijk[idx] *= MM_PER_INCH; }
+                if (ijk_words & BIT(idx)) { gc_block.values.ijk[idx] *= MM_PER_INCH; }
               }
             }
 
@@ -815,11 +815,11 @@ uint8_t gc_execute_line(char *line)
   //[0.非特定错误检查]：完成未使用的值字检查，即在圆弧半径模式下使用的IJK，或块中未使用的轴字。
   if (gc_parser_flags & GC_PARSER_JOG_MOTION) {
     //点动仅使用F进给率和XYZ值字。N有效，但S和T无效。
-    bit_false(value_words,(bit(WORD_N)|bit(WORD_F)));
+    bit_false(value_words,(BIT(WORD_N)|BIT(WORD_F)));
   } else {
-    bit_false(value_words,(bit(WORD_N)|bit(WORD_F)|bit(WORD_S)|bit(WORD_T))); //删除单义词。
+    bit_false(value_words,(BIT(WORD_N)|BIT(WORD_F)|BIT(WORD_S)|BIT(WORD_T))); //删除单义词。
   }
-  if (axis_command) { bit_false(value_words,(bit(WORD_X)|bit(WORD_Y)|bit(WORD_Z))); } //删除轴字。
+  if (axis_command) { bit_false(value_words,(BIT(WORD_X)|BIT(WORD_Y)|BIT(WORD_Z))); } //删除轴字。
   if (value_words) { FAIL(STATUS_GCODE_UNUSED_WORDS); } //[未使用的单词]
 
   /*-------------------------------------------------------------------------------------
@@ -838,7 +838,7 @@ uint8_t gc_execute_line(char *line)
   if (gc_parser_flags & GC_PARSER_JOG_MOTION) {
     //仅允许使用距离和单位模式命令以及G53绝对覆盖命令。
 //注意：在步骤3中已执行进给率字和轴字检查。
-    if (command_words & ~(bit(MODAL_GROUP_G3) | bit(MODAL_GROUP_G6) | bit(MODAL_GROUP_G0)) ) { FAIL(STATUS_INVALID_JOG_COMMAND) };
+    if (command_words & ~(BIT(MODAL_GROUP_G3) | BIT(MODAL_GROUP_G6) | BIT(MODAL_GROUP_G0)) ) { FAIL(STATUS_INVALID_JOG_COMMAND) };
     if (!(gc_block.non_modal_command == NON_MODAL_ABSOLUTE_OVERRIDE || gc_block.non_modal_command == NON_MODAL_NO_ACTION)) { FAIL(STATUS_INVALID_JOG_COMMAND); }
 
     //将规划器数据初始化为当前主轴和冷却液模式状态。

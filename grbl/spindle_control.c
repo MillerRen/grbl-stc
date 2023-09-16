@@ -28,8 +28,8 @@ void spindle_init()
     PWMA_CCER1 = 0x00;                          //写CCMRx前必须先清零CCERx关闭通道
     PWMA_CCMR1 = 0x60;                          //设置CC1为PWMA输出模式
     PWMA_CCER1 = 0x01;                          //使能CC1通道
-    PWMA_CCR1 = 10;                              //设置占空比时间
-    PWMA_ARR = 500;                             //设置周期时间
+    // PWMA_CCR1 = 0;                              //设置占空比时间
+    PWMA_ARR = 999;                             //设置周期时间
     PWMA_ENO = 0x01;                            //使能PWM1P端口输出
     PWMA_BKR = 0x80;                            //使能主输出
     PWMA_CR1 = 0x01;                            //开始计时
@@ -84,22 +84,7 @@ uint8_t spindle_get_state()
 //由主轴_init（）、主轴_set_speed（）、主轴_set_state（）和mc_reset（）调用。
 void spindle_stop()
 {
-  #ifdef VARIABLE_SPINDLE
-//    SPINDLE_TCCRA_REGISTER &= ~(1<<SPINDLE_COMB_BIT); //禁用PWM。输出电压为零。
-    #ifdef USE_SPINDLE_DIR_AS_ENABLE_PIN
-      #ifdef INVERT_SPINDLE_ENABLE_PIN
-        SPINDLE_ENABLE_PORT |= (1<<SPINDLE_ENABLE_BIT);  //将引脚设置为高
-      #else
-        SPINDLE_ENABLE_PORT &= ~(1<<SPINDLE_ENABLE_BIT); //将引脚设置为低
-      #endif
-    #endif
-  #else
-    #ifdef INVERT_SPINDLE_ENABLE_PIN
-      SPINDLE_ENABLE_PORT |= (1<<SPINDLE_ENABLE_BIT);  //将引脚设置为高
-    #else
-      SPINDLE_ENABLE_PORT &= ~(1<<SPINDLE_ENABLE_BIT); // Set pin to low
-    #endif
-  #endif
+    PWMA_CCR1 = 0;                              //设置占空比时间
 }
 
 
@@ -107,25 +92,7 @@ void spindle_stop()
   //设置主轴速度PWM输出和启用引脚（如果配置）。由spindle_set_state（）和步进ISR调用。保持小规模和高效率的运行。
   void spindle_set_speed(uint8_t pwm_value)
   {
-//    SPINDLE_OCR_REGISTER = pwm_value; //设置PWM输出电平。
-    #ifdef SPINDLE_ENABLE_OFF_WITH_ZERO_SPEED
-      if (pwm_value == SPINDLE_PWM_OFF_VALUE) {
-        spindle_stop();
-      } else {
-        SPINDLE_TCCRA_REGISTER |= (1<<SPINDLE_COMB_BIT); //确保PWM输出已启用。
-        #ifdef INVERT_SPINDLE_ENABLE_PIN
-          SPINDLE_ENABLE_PORT &= ~(1<<SPINDLE_ENABLE_BIT);
-        #else
-          SPINDLE_ENABLE_PORT |= (1<<SPINDLE_ENABLE_BIT);
-        #endif
-      }
-    #else
-      if (pwm_value == SPINDLE_PWM_OFF_VALUE) {
-//        SPINDLE_TCCRA_REGISTER &= ~(1<<SPINDLE_COMB_BIT); //禁用PWM。输出电压为零。
-      } else {
-  //      SPINDLE_TCCRA_REGISTER |= (1<<SPINDLE_COMB_BIT); //确保PWM输出已启用。
-      }
-    #endif
+       PWMA_CCR1 = pwm_value; //设置PWM输出电平。
   }
 
 

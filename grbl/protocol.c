@@ -15,9 +15,9 @@
 #include "grbl.h"
 
 // 定义行标志位。包括注释类型跟踪和行溢出检查。
-#define LINE_FLAG_OVERFLOW bit(0)
-#define LINE_FLAG_COMMENT_PARENTHESES bit(1)
-#define LINE_FLAG_COMMENT_SEMICOLON bit(2)
+#define LINE_FLAG_OVERFLOW BIT(0)
+#define LINE_FLAG_COMMENT_PARENTHESES BIT(1)
+#define LINE_FLAG_COMMENT_SEMICOLON BIT(2)
 
 
 static char line[LINE_BUFFER_SIZE]; // 被执行的行。以零为结束符。

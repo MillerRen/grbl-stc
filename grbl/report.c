@@ -573,18 +573,18 @@ void report_realtime_status()
       if (lim_pin_state) {
         #ifdef ENABLE_DUAL_AXIS
           #if (DUAL_AXIS_SELECT == X_AXIS)
-            if (bit_istrue(lim_pin_state,(bit(X_AXIS)|bit(N_AXIS)))) { serial_write('X'); }
-            if (bit_istrue(lim_pin_state,bit(Y_AXIS))) { serial_write('Y'); }
+            if (bit_istrue(lim_pin_state,(BIT(X_AXIS)|BIT(N_AXIS)))) { serial_write('X'); }
+            if (bit_istrue(lim_pin_state,BIT(Y_AXIS))) { serial_write('Y'); }
           #endif
           #if (DUAL_AXIS_SELECT == Y_AXIS)
-            if (bit_istrue(lim_pin_state,bit(X_AXIS))) { serial_write('X'); }
-            if (bit_istrue(lim_pin_state,(bit(Y_AXIS)|bit(N_AXIS)))) { serial_write('Y'); }
+            if (bit_istrue(lim_pin_state,BIT(X_AXIS))) { serial_write('X'); }
+            if (bit_istrue(lim_pin_state,(BIT(Y_AXIS)|BIT(N_AXIS)))) { serial_write('Y'); }
           #endif
-          if (bit_istrue(lim_pin_state,bit(Z_AXIS))) { serial_write('Z'); }
+          if (bit_istrue(lim_pin_state,BIT(Z_AXIS))) { serial_write('Z'); }
         #else
-          if (bit_istrue(lim_pin_state,bit(X_AXIS))) { serial_write('X'); }
-          if (bit_istrue(lim_pin_state,bit(Y_AXIS))) { serial_write('Y'); }
-          if (bit_istrue(lim_pin_state,bit(Z_AXIS))) { serial_write('Z'); }
+          if (bit_istrue(lim_pin_state,BIT(X_AXIS))) { serial_write('X'); }
+          if (bit_istrue(lim_pin_state,BIT(Y_AXIS))) { serial_write('Y'); }
+          if (bit_istrue(lim_pin_state,BIT(Z_AXIS))) { serial_write('Z'); }
         #endif
       }
       if (ctrl_pin_state) {

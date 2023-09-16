@@ -22,14 +22,14 @@
 //注意：系统执行器使用无符号8位易失性变量（8标志限制）默认值
 //标志始终为false，因此realtime协议只需检查非零值即可
 //知道何时有实时命令要执行。
-#define EXEC_STATUS_REPORT  bit(0) // bitmask 00000001
-#define EXEC_CYCLE_START    bit(1) // bitmask 00000010
-#define EXEC_CYCLE_STOP     bit(2) // bitmask 00000100
-#define EXEC_FEED_HOLD      bit(3) // bitmask 00001000
-#define EXEC_RESET          bit(4) // bitmask 00010000
-#define EXEC_SAFETY_DOOR    bit(5) // bitmask 00100000
-#define EXEC_MOTION_CANCEL  bit(6) // bitmask 01000000
-#define EXEC_SLEEP          bit(7) // bitmask 10000000
+#define EXEC_STATUS_REPORT  BIT(0) // bitmask 00000001
+#define EXEC_CYCLE_START    BIT(1) // bitmask 00000010
+#define EXEC_CYCLE_STOP     BIT(2) // bitmask 00000100
+#define EXEC_FEED_HOLD      BIT(3) // bitmask 00001000
+#define EXEC_RESET          BIT(4) // bitmask 00010000
+#define EXEC_SAFETY_DOOR    BIT(5) // bitmask 00100000
+#define EXEC_MOTION_CANCEL  BIT(6) // bitmask 01000000
+#define EXEC_SLEEP          BIT(7) // bitmask 10000000
 
 //报警执行器代码。有效值（1-255）。零是保留的。
 #define EXEC_ALARM_HARD_LIMIT                 1
@@ -45,74 +45,74 @@
 
 //覆盖位图。用于控制进给、快速、主轴和冷却液覆盖的实时位标志。
 //主轴/冷却液和进给/急流分为两个控制标志变量。
-#define EXEC_FEED_OVR_RESET         bit(0)
-#define EXEC_FEED_OVR_COARSE_PLUS   bit(1)
-#define EXEC_FEED_OVR_COARSE_MINUS  bit(2)
-#define EXEC_FEED_OVR_FINE_PLUS     bit(3)
-#define EXEC_FEED_OVR_FINE_MINUS    bit(4)
-#define EXEC_RAPID_OVR_RESET        bit(5)
-#define EXEC_RAPID_OVR_MEDIUM       bit(6)
-#define EXEC_RAPID_OVR_LOW          bit(7)
-// #define EXEC_RAPID_OVR_EXTRA_LOW   bit(*) // *NOT SUPPORTED*
+#define EXEC_FEED_OVR_RESET         BIT(0)
+#define EXEC_FEED_OVR_COARSE_PLUS   BIT(1)
+#define EXEC_FEED_OVR_COARSE_MINUS  BIT(2)
+#define EXEC_FEED_OVR_FINE_PLUS     BIT(3)
+#define EXEC_FEED_OVR_FINE_MINUS    BIT(4)
+#define EXEC_RAPID_OVR_RESET        BIT(5)
+#define EXEC_RAPID_OVR_MEDIUM       BIT(6)
+#define EXEC_RAPID_OVR_LOW          BIT(7)
+// #define EXEC_RAPID_OVR_EXTRA_LOW   BIT(*) // *NOT SUPPORTED*
 
-#define EXEC_SPINDLE_OVR_RESET         bit(0)
-#define EXEC_SPINDLE_OVR_COARSE_PLUS   bit(1)
-#define EXEC_SPINDLE_OVR_COARSE_MINUS  bit(2)
-#define EXEC_SPINDLE_OVR_FINE_PLUS     bit(3)
-#define EXEC_SPINDLE_OVR_FINE_MINUS    bit(4)
-#define EXEC_SPINDLE_OVR_STOP          bit(5)
-#define EXEC_COOLANT_FLOOD_OVR_TOGGLE  bit(6)
-#define EXEC_COOLANT_MIST_OVR_TOGGLE   bit(7)
+#define EXEC_SPINDLE_OVR_RESET         BIT(0)
+#define EXEC_SPINDLE_OVR_COARSE_PLUS   BIT(1)
+#define EXEC_SPINDLE_OVR_COARSE_MINUS  BIT(2)
+#define EXEC_SPINDLE_OVR_FINE_PLUS     BIT(3)
+#define EXEC_SPINDLE_OVR_FINE_MINUS    BIT(4)
+#define EXEC_SPINDLE_OVR_STOP          BIT(5)
+#define EXEC_COOLANT_FLOOD_OVR_TOGGLE  BIT(6)
+#define EXEC_COOLANT_MIST_OVR_TOGGLE   BIT(7)
 
 //定义系统状态位图。state变量主要跟踪Grbl的各个功能，以便在不重叠的情况下管理每个功能。它还用作关键事件的消息传递标志。
 #define STATE_IDLE          0//必须是零。没有标志。
-#define STATE_ALARM         bit(0)//处于报警状态。锁定所有g代码进程。允许设置访问。
-#define STATE_CHECK_MODE    bit(1)//G代码检查模式。仅锁定“规划器”和“运动”。
-#define STATE_HOMING        bit(2)//执行归位循环
-#define STATE_CYCLE         bit(3)//正在运行循环或正在执行运动。
-#define STATE_HOLD          bit(4)//激活进给保持
-#define STATE_JOG           bit(5)//点动模式。
-#define STATE_SAFETY_DOOR   bit(6)//安全门半开着。进给保持并断开系统电源。
-#define STATE_SLEEP         bit(7)//睡眠状态。
+#define STATE_ALARM         BIT(0)//处于报警状态。锁定所有g代码进程。允许设置访问。
+#define STATE_CHECK_MODE    BIT(1)//G代码检查模式。仅锁定“规划器”和“运动”。
+#define STATE_HOMING        BIT(2)//执行归位循环
+#define STATE_CYCLE         BIT(3)//正在运行循环或正在执行运动。
+#define STATE_HOLD          BIT(4)//激活进给保持
+#define STATE_JOG           BIT(5)//点动模式。
+#define STATE_SAFETY_DOOR   BIT(6)//安全门半开着。进给保持并断开系统电源。
+#define STATE_SLEEP         BIT(7)//睡眠状态。
 
 //定义系统挂起标志。以各种方式用于管理挂起状态和过程。
 #define SUSPEND_DISABLE           0//必须是零。
-#define SUSPEND_HOLD_COMPLETE     bit(0)//表示初始进给保持完成。
-#define SUSPEND_RESTART_RETRACT   bit(1)//指示从恢复停靠运动中收回的标志。
-#define SUSPEND_RETRACT_COMPLETE  bit(2)//（仅限安全门）表示缩回和断电完成。
-#define SUSPEND_INITIATE_RESTORE  bit(3)//（仅限安全门）从循环开始启动恢复程序的标志。
-#define SUSPEND_RESTORE_COMPLETE  bit(4)//（仅限安全门）表示准备恢复正常操作。
-#define SUSPEND_SAFETY_DOOR_AJAR  bit(5)//跟踪安全门状态以恢复。
-#define SUSPEND_MOTION_CANCEL     bit(6)//指示已取消的恢复动作。当前由探测例程使用。
-#define SUSPEND_JOG_CANCEL        bit(7)//指示进程中的点动取消，并在完成时重置缓冲区。
+#define SUSPEND_HOLD_COMPLETE     BIT(0)//表示初始进给保持完成。
+#define SUSPEND_RESTART_RETRACT   BIT(1)//指示从恢复停靠运动中收回的标志。
+#define SUSPEND_RETRACT_COMPLETE  BIT(2)//（仅限安全门）表示缩回和断电完成。
+#define SUSPEND_INITIATE_RESTORE  BIT(3)//（仅限安全门）从循环开始启动恢复程序的标志。
+#define SUSPEND_RESTORE_COMPLETE  BIT(4)//（仅限安全门）表示准备恢复正常操作。
+#define SUSPEND_SAFETY_DOOR_AJAR  BIT(5)//跟踪安全门状态以恢复。
+#define SUSPEND_MOTION_CANCEL     BIT(6)//指示已取消的恢复动作。当前由探测例程使用。
+#define SUSPEND_JOG_CANCEL        BIT(7)//指示进程中的点动取消，并在完成时重置缓冲区。
 
 //定义步进段生成器状态标志。
 #define STEP_CONTROL_NORMAL_OP            0//必须是零。
-#define STEP_CONTROL_END_MOTION           bit(0)
-#define STEP_CONTROL_EXECUTE_HOLD         bit(1)
-#define STEP_CONTROL_EXECUTE_SYS_MOTION   bit(2)
-#define STEP_CONTROL_UPDATE_SPINDLE_PWM   bit(3)
+#define STEP_CONTROL_END_MOTION           BIT(0)
+#define STEP_CONTROL_EXECUTE_HOLD         BIT(1)
+#define STEP_CONTROL_EXECUTE_SYS_MOTION   BIT(2)
+#define STEP_CONTROL_UPDATE_SPINDLE_PWM   BIT(3)
 
 //定义Grbl内部使用的控制引脚索引。管脚映射可能会更改，但这些值不会更改。
 #ifdef ENABLE_SAFETY_DOOR_INPUT_PIN
   #define N_CONTROL_PIN 4
-  #define CONTROL_PIN_INDEX_SAFETY_DOOR   bit(0)
-  #define CONTROL_PIN_INDEX_RESET         bit(1)
-  #define CONTROL_PIN_INDEX_FEED_HOLD     bit(2)
-  #define CONTROL_PIN_INDEX_CYCLE_START   bit(3)
+  #define CONTROL_PIN_INDEX_SAFETY_DOOR   BIT(0)
+  #define CONTROL_PIN_INDEX_RESET         BIT(1)
+  #define CONTROL_PIN_INDEX_FEED_HOLD     BIT(2)
+  #define CONTROL_PIN_INDEX_CYCLE_START   BIT(3)
 #else
   #define N_CONTROL_PIN 3
-  #define CONTROL_PIN_INDEX_RESET         bit(0)
-  #define CONTROL_PIN_INDEX_FEED_HOLD     bit(1)
-  #define CONTROL_PIN_INDEX_CYCLE_START   bit(2)
+  #define CONTROL_PIN_INDEX_RESET         BIT(0)
+  #define CONTROL_PIN_INDEX_FEED_HOLD     BIT(1)
+  #define CONTROL_PIN_INDEX_CYCLE_START   BIT(2)
 #endif
 
 //定义主轴停止覆盖控制状态。
 #define SPINDLE_STOP_OVR_DISABLED       0//必须是零。
-#define SPINDLE_STOP_OVR_ENABLED        bit(0)
-#define SPINDLE_STOP_OVR_INITIATE       bit(1)
-#define SPINDLE_STOP_OVR_RESTORE        bit(2)
-#define SPINDLE_STOP_OVR_RESTORE_CYCLE  bit(3)
+#define SPINDLE_STOP_OVR_ENABLED        BIT(0)
+#define SPINDLE_STOP_OVR_INITIATE       BIT(1)
+#define SPINDLE_STOP_OVR_RESTORE        BIT(2)
+#define SPINDLE_STOP_OVR_RESTORE_CYCLE  BIT(3)
 
 
 //定义全局系统变量
@@ -153,7 +153,7 @@ extern volatile uint8_t sys_rt_exec_motion_override;//基于运动的覆盖的�
 extern volatile uint8_t sys_rt_exec_accessory_override;//主轴/冷却液覆盖的全局实时执行器位标志变量。
 
 #ifdef DEBUG
-  #define EXEC_DEBUG_REPORT  bit(0)
+  #define EXEC_DEBUG_REPORT  BIT(0)
   extern volatile uint8_t sys_rt_exec_debug;
 #endif
 

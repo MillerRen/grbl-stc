@@ -23,10 +23,10 @@
 #define RAMP_DECEL 2
 #define RAMP_DECEL_OVERRIDE 3
 
-#define PREP_FLAG_RECALCULATE bit(0)
-#define PREP_FLAG_HOLD_PARTIAL_BLOCK bit(1)
-#define PREP_FLAG_PARKING bit(2)
-#define PREP_FLAG_DECEL_OVERRIDE bit(3)
+#define PREP_FLAG_RECALCULATE BIT(0)
+#define PREP_FLAG_HOLD_PARTIAL_BLOCK BIT(1)
+#define PREP_FLAG_PARKING BIT(2)
+#define PREP_FLAG_DECEL_OVERRIDE BIT(3)
 
 //定义自适应多轴步进平滑（AMASS）级别和截止频率。
 //最高电平频率槽开始于0Hz，结束于其截止频率。
@@ -476,15 +476,15 @@ void st_generate_step_dir_invert_masks()
   step_port_invert_mask = 0;
   dir_port_invert_mask = 0;
   for (idx=0; idx<N_AXIS; idx++) {
-    if (bit_istrue(settings.step_invert_mask,bit(idx))) { step_port_invert_mask |= get_step_pin_mask(idx); }
-    if (bit_istrue(settings.dir_invert_mask,bit(idx))) { dir_port_invert_mask |= get_direction_pin_mask(idx); }
+    if (bit_istrue(settings.step_invert_mask,BIT(idx))) { step_port_invert_mask |= get_step_pin_mask(idx); }
+    if (bit_istrue(settings.dir_invert_mask,BIT(idx))) { dir_port_invert_mask |= get_direction_pin_mask(idx); }
   }
   #ifdef ENABLE_DUAL_AXIS
     step_port_invert_mask_dual = 0;
     dir_port_invert_mask_dual = 0;
     //注：双轴反转使用N_AXIS位设置步进和方向反转引脚。
-    if (bit_istrue(settings.step_invert_mask,bit(N_AXIS))) { step_port_invert_mask_dual = (1<<DUAL_STEP_BIT); }
-    if (bit_istrue(settings.dir_invert_mask,bit(N_AXIS))) { dir_port_invert_mask_dual = (1<<DUAL_DIRECTION_BIT); }
+    if (bit_istrue(settings.step_invert_mask,BIT(N_AXIS))) { step_port_invert_mask_dual = (1<<DUAL_STEP_BIT); }
+    if (bit_istrue(settings.dir_invert_mask,BIT(N_AXIS))) { dir_port_invert_mask_dual = (1<<DUAL_DIRECTION_BIT); }
   #endif
 }
 

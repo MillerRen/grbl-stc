@@ -325,7 +325,7 @@ uint8_t system_check_travel_limits(float *target)
     #ifdef HOMING_FORCE_SET_ORIGIN
       //启用归位强制设置原点时，软限位检查需要考虑方向性。
       //注意：最大行程存储为负数
-      if (bit_istrue(settings.homing_dir_mask,bit(idx))) {
+      if (bit_istrue(settings.homing_dir_mask,BIT(idx))) {
         if (target[idx] < 0 || target[idx] > -settings.max_travel[idx]) { return(true); }
       } else {
         if (target[idx] > 0 || target[idx] < settings.max_travel[idx]) { return(true); }

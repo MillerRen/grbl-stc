@@ -26,9 +26,9 @@
 #ifdef ENABLE_DUAL_AXIS
   //双轴异步限制触发器检查的标志。
   #define DUAL_AXIS_CHECK_DISABLE     0  //必须为零
-  #define DUAL_AXIS_CHECK_ENABLE      bit(0)
-  #define DUAL_AXIS_CHECK_TRIGGER_1   bit(1)
-  #define DUAL_AXIS_CHECK_TRIGGER_2   bit(2)
+  #define DUAL_AXIS_CHECK_ENABLE      BIT(0)
+  #define DUAL_AXIS_CHECK_TRIGGER_1   BIT(1)
+  #define DUAL_AXIS_CHECK_TRIGGER_2   BIT(2)
 #endif
 
 void limits_init()
@@ -191,7 +191,7 @@ void limits_go_home(uint8_t cycle_mask)
       if ((idx==A_MOTOR)||(idx==B_MOTOR)) { step_pin[idx] = (get_step_pin_mask(X_AXIS)|get_step_pin_mask(Y_AXIS)); }
     #endif
 
-    if (bit_istrue(cycle_mask,bit(idx))) {
+    if (bit_istrue(cycle_mask,BIT(idx))) {
       //根据最大行程设置设置目标。确保寻的开关与搜索标量接合。
       //注意：settings.max_travel[]存储为负值。
       max_travel = max(max_travel,(-HOMING_AXIS_SEARCH_SCALAR)*settings.max_travel[idx]);
@@ -220,7 +220,7 @@ void limits_go_home(uint8_t cycle_mask)
     n_active_axis = 0;
     for (idx=0; idx<N_AXIS; idx++) {
       //设置活动轴的目标位置，并设置归位率的计算。
-      if (bit_istrue(cycle_mask,bit(idx))) {
+      if (bit_istrue(cycle_mask,BIT(idx))) {
         n_active_axis++;
         #ifdef COREXY
           if (idx == X_AXIS) {
@@ -238,7 +238,7 @@ void limits_go_home(uint8_t cycle_mask)
         #endif
         //根据周期掩码和寻的周期进近状态设置目标方向。
         //注意：这种编译比任何其他尝试过的实现都要小。
-        if (bit_istrue(settings.homing_dir_mask,bit(idx))) {
+        if (bit_istrue(settings.homing_dir_mask,BIT(idx))) {
           if (approach) { target[idx] = -max_travel; }
           else { target[idx] = max_travel; }
         } else {
@@ -368,11 +368,11 @@ void limits_go_home(uint8_t cycle_mask)
   // 为限位开关设置机器位置。不更新没有设置归位的轴。
   for (idx=0; idx<N_AXIS; idx++) {
     //注意：settings.max_travel[]存储为负值。
-    if (cycle_mask & bit(idx)) {
+    if (cycle_mask & BIT(idx)) {
       #ifdef HOMING_FORCE_SET_ORIGIN
         set_axis_position = 0;
       #else
-        if ( bit_istrue(settings.homing_dir_mask,bit(idx)) ) {
+        if ( bit_istrue(settings.homing_dir_mask,BIT(idx)) ) {
           set_axis_position = lround((settings.max_travel[idx]+settings.homing_pulloff)*settings.steps_per_mm[idx]);
         } else {
           set_axis_position = lround(-settings.homing_pulloff*settings.steps_per_mm[idx]);
