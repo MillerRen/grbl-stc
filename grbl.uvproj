@@ -316,7 +316,7 @@
             <Fuzzy>3</Fuzzy>
             <Optimize>8</Optimize>
             <WarningLevel>2</WarningLevel>
-            <SizeSpeed>1</SizeSpeed>
+            <SizeSpeed>0</SizeSpeed>
             <ObjectExtend>1</ObjectExtend>
             <ACallAJmp>0</ACallAJmp>
             <InterruptVectorAddress>0</InterruptVectorAddress>
@@ -373,74 +373,6 @@
         </Target51>
       </TargetOption>
       <Groups>
-        <Group>
-          <GroupName>user</GroupName>
-          <GroupOption>
-            <CommonProperty>
-              <UseCPPCompiler>0</UseCPPCompiler>
-              <RVCTCodeConst>0</RVCTCodeConst>
-              <RVCTZI>0</RVCTZI>
-              <RVCTOtherData>0</RVCTOtherData>
-              <ModuleSelection>0</ModuleSelection>
-              <IncludeInBuild>2</IncludeInBuild>
-              <AlwaysBuild>2</AlwaysBuild>
-              <GenerateAssemblyFile>2</GenerateAssemblyFile>
-              <AssembleAssemblyFile>2</AssembleAssemblyFile>
-              <PublicsOnly>2</PublicsOnly>
-              <StopOnExitCode>11</StopOnExitCode>
-              <CustomArgument></CustomArgument>
-              <IncludeLibraryModules></IncludeLibraryModules>
-              <ComprImg>1</ComprImg>
-              <BankNo>65535</BankNo>
-            </CommonProperty>
-            <Group51>
-              <C51>
-                <RegisterColoring>2</RegisterColoring>
-                <VariablesInOrder>2</VariablesInOrder>
-                <IntegerPromotion>2</IntegerPromotion>
-                <uAregs>2</uAregs>
-                <UseInterruptVector>2</UseInterruptVector>
-                <Fuzzy>8</Fuzzy>
-                <Optimize>10</Optimize>
-                <WarningLevel>3</WarningLevel>
-                <SizeSpeed>2</SizeSpeed>
-                <ObjectExtend>2</ObjectExtend>
-                <ACallAJmp>2</ACallAJmp>
-                <InterruptVectorAddress>0</InterruptVectorAddress>
-                <VariousControls>
-                  <MiscControls></MiscControls>
-                  <Define></Define>
-                  <Undefine></Undefine>
-                  <IncludePath>.\User;.\grbl</IncludePath>
-                </VariousControls>
-              </C51>
-              <Ax51>
-                <UseMpl>2</UseMpl>
-                <UseStandard>2</UseStandard>
-                <UseCase>2</UseCase>
-                <UseMod51>2</UseMod51>
-                <VariousControls>
-                  <MiscControls></MiscControls>
-                  <Define></Define>
-                  <Undefine></Undefine>
-                  <IncludePath></IncludePath>
-                </VariousControls>
-              </Ax51>
-            </Group51>
-          </GroupOption>
-          <Files>
-            <File>
-              <FileName>main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\User\main.c</FilePath>
-            </File>
-            <File>
-              <FileName>compat.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\User\compat.h</FilePath>
-            </File>
-          </Files>
-        </Group>
         <Group>
           <GroupName>grbl</GroupName>
           <GroupOption>
@@ -581,6 +513,11 @@
               <FileName>system.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\grbl\system.c</FilePath>
+            </File>
+            <File>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\grbl\main.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -1,2 +1,4 @@
 Objects/
 Listings/
+*.log
+*.lock

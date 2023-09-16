@@ -22,26 +22,20 @@
 
 void spindle_init()
 {
-  #ifdef VARIABLE_SPINDLE
-    //如果需要，配置可变主轴PWM和启用引脚。
-    //在Uno上，PWM和enable是共用的，除非另有配置。
- //   SPINDLE_PWM_DDR |= (1<<SPINDLE_PWM_BIT); //配置为PWM输出引脚。
- //   SPINDLE_TCCRA_REGISTER = SPINDLE_TCCRA_INIT_MASK; //配置PWM输出比较定时器
- //   SPINDLE_TCCRB_REGISTER = SPINDLE_TCCRB_INIT_MASK;
-    #ifdef USE_SPINDLE_DIR_AS_ENABLE_PIN
-  //    SPINDLE_ENABLE_DDR |= (1<<SPINDLE_ENABLE_BIT); //配置为输出引脚。
-    #else
-      #ifndef ENABLE_DUAL_AXIS
-        SPINDLE_DIRECTION_DDR |= (1<<SPINDLE_DIRECTION_BIT); //配置为输出引脚。
-      #endif
-    #endif
+  
+    P1M0 |= 0x01; P1M1 &= ~0x01; 
+    // PWMA_PS = 0x01;                             //引脚切换p2.0输出,默认p1.0
+    PWMA_CCER1 = 0x00;                          //写CCMRx前必须先清零CCERx关闭通道
+    PWMA_CCMR1 = 0x60;                          //设置CC1为PWMA输出模式
+    PWMA_CCER1 = 0x01;                          //使能CC1通道
+    PWMA_CCR1 = 10;                              //设置占空比时间
+    PWMA_ARR = 500;                             //设置周期时间
+    PWMA_ENO = 0x01;                            //使能PWM1P端口输出
+    PWMA_BKR = 0x80;                            //使能主输出
+    PWMA_CR1 = 0x01;                            //开始计时
+	
     pwm_gradient = SPINDLE_PWM_RANGE/(settings.rpm_max-settings.rpm_min);
-  #else
-    SPINDLE_ENABLE_DDR |= (1<<SPINDLE_ENABLE_BIT); //配置为输出引脚。
-    #ifndef ENABLE_DUAL_AXIS
-      SPINDLE_DIRECTION_DDR |= (1<<SPINDLE_DIRECTION_BIT); //配置为输出引脚。
-    #endif
-  #endif
+  
 
   spindle_stop();
 }
