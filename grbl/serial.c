@@ -95,6 +95,10 @@ void serial_write(uint8_t _data) {
   }
 }
 
+char putchar(char c) {
+  serial_write(c);
+  return 1;
+}
 
 // 数据寄存器为空的中断处理
 void SERIAL_UDRE()

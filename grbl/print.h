@@ -15,10 +15,11 @@
 #ifndef print_h
 #define print_h
 
+#define printPgmString printString
 
 void printString(const char *s);
 
-void printPgmString(const char *s);
+// void printPgmString(const char *s);
 
 void printInteger(long n);
 

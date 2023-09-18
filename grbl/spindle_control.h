@@ -19,8 +19,8 @@
 #define SPINDLE_FORCE_SYNC true
 
 #define SPINDLE_STATE_DISABLE  0//必须是零。
-#define SPINDLE_STATE_CW       BIT(0)
-#define SPINDLE_STATE_CCW      BIT(1)
+#define SPINDLE_STATE_CW       bit_mask(0)
+#define SPINDLE_STATE_CCW      bit_mask(1)
 
 
 //初始化主轴销和硬件PWM（如果启用）。

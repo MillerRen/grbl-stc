@@ -54,4 +54,6 @@ uint8_t serial_get_rx_buffer_count();
 // 注意：没有用到除非为了调试和保证串口发送缓冲区没有瓶颈。
 uint8_t serial_get_tx_buffer_count();
 
+char putchar(char c);
+
 #endif

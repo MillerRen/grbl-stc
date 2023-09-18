@@ -75,7 +75,7 @@ uint8_t spindle_get_state()
       #endif
     }
   #endif
-  return(SPINDLE_STATE_DISABLE);
+  return(SPINDLE_STATE_CW);
 }
 
 
@@ -93,6 +93,7 @@ void spindle_stop()
   void spindle_set_speed(uint8_t pwm_value)
   {
        PWMA_CCR1 = pwm_value; //设置PWM输出电平。
+       serial_write(pwm_value);
   }
 
 

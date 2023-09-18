@@ -51,7 +51,7 @@
 #define isequal_position_vector(a,b) !(memcmp(a, b, sizeof(float)*N_AXIS))
 
 // 位字段和掩码宏定义
-#define BIT(n) (1 << n)
+#define bit_mask(n) (1<<n)
 #define bit_true(x,mask) (x) |= (mask)
 #define bit_false(x,mask) (x) &= ~(mask)
 #define bit_istrue(x,mask) ((x & mask) != 0)

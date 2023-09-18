@@ -21,9 +21,9 @@
 #define PARKING_MOTION_LINE_NUMBER 0
 
 #define HOMING_CYCLE_ALL  0//必须是零。
-#define HOMING_CYCLE_X    BIT(X_AXIS)
-#define HOMING_CYCLE_Y    BIT(Y_AXIS)
-#define HOMING_CYCLE_Z    BIT(Z_AXIS)
+#define HOMING_CYCLE_X    bit_mask(X_AXIS)
+#define HOMING_CYCLE_Y    bit_mask(Y_AXIS)
+#define HOMING_CYCLE_Z    bit_mask(Z_AXIS)
 
 
 //在绝对毫米坐标系下执行线性运动。

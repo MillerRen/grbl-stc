@@ -26,21 +26,15 @@
 #define GRBL_VERSION_BUILD "20190830"
 
 // Define standard libraries used by Grbl.
-//#include <avr/io.h>
-//#include <avr/pgmspace.h>
-//#include <avr/interrupt.h>
-//#include <avr/wdt.h>
-//#include <util/delay.h>
+#include <stc8h.h>
 #include <math.h>
 //#include <inttypes.h>
 #include <string.h>
 #include <stdlib.h>
-//#include <stdint.h>
-//#include <stdbool.h>
+#include <stdio.h>
+#include <stddef.H>
+#include <intrins.H>
 
-#include <STC8H.H>
-#include <INTRINS.H>
-#include <STDDEF.H>
 #include "compat.h"
 
 // Define the Grbl system include files. NOTE: Do not alter organization.

@@ -159,14 +159,14 @@
 
  // 定义用于处理特殊情况的gcode解析器标志。
 #define GC_PARSER_NONE                  0 // 必须是零。
-#define GC_PARSER_JOG_MOTION            BIT(0)
-#define GC_PARSER_CHECK_MANTISSA        BIT(1)
-#define GC_PARSER_ARC_IS_CLOCKWISE      BIT(2)
-#define GC_PARSER_PROBE_IS_AWAY         BIT(3)
-#define GC_PARSER_PROBE_IS_NO_ERROR     BIT(4)
-#define GC_PARSER_LASER_FORCE_SYNC      BIT(5)
-#define GC_PARSER_LASER_DISABLE         BIT(6)
-#define GC_PARSER_LASER_ISMOTION        BIT(7)
+#define GC_PARSER_JOG_MOTION            bit_mask(0)
+#define GC_PARSER_CHECK_MANTISSA        bit_mask(1)
+#define GC_PARSER_ARC_IS_CLOCKWISE      bit_mask(2)
+#define GC_PARSER_PROBE_IS_AWAY         bit_mask(3)
+#define GC_PARSER_PROBE_IS_NO_ERROR     bit_mask(4)
+#define GC_PARSER_LASER_FORCE_SYNC      bit_mask(5)
+#define GC_PARSER_LASER_DISABLE         bit_mask(6)
+#define GC_PARSER_LASER_ISMOTION        bit_mask(7)
 
 
  // 注意：当此结构为零时，上面定义了系统的默认设置。

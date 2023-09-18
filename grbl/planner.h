@@ -30,14 +30,14 @@
 #define PLAN_EMPTY_BLOCK false
 
 //定义计划器数据条件标志。用于表示块的运行条件。
-#define PL_COND_FLAG_RAPID_MOTION      BIT(0)
-#define PL_COND_FLAG_SYSTEM_MOTION     BIT(1)//单个动作。绕过计划者状态。用于归位/停靠。
-#define PL_COND_FLAG_NO_FEED_OVERRIDE  BIT(2)//运动不支持进给覆盖。
-#define PL_COND_FLAG_INVERSE_TIME      BIT(3)//设置时，将进给速度值解释为反时间。
-#define PL_COND_FLAG_SPINDLE_CW        BIT(4)
-#define PL_COND_FLAG_SPINDLE_CCW       BIT(5)
-#define PL_COND_FLAG_COOLANT_FLOOD     BIT(6)
-#define PL_COND_FLAG_COOLANT_MIST      BIT(7)
+#define PL_COND_FLAG_RAPID_MOTION      bit_mask(0)
+#define PL_COND_FLAG_SYSTEM_MOTION     bit_mask(1)//单个动作。绕过计划者状态。用于归位/停靠。
+#define PL_COND_FLAG_NO_FEED_OVERRIDE  bit_mask(2)//运动不支持进给覆盖。
+#define PL_COND_FLAG_INVERSE_TIME      bit_mask(3)//设置时，将进给速度值解释为反时间。
+#define PL_COND_FLAG_SPINDLE_CW        bit_mask(4)
+#define PL_COND_FLAG_SPINDLE_CCW       bit_mask(5)
+#define PL_COND_FLAG_COOLANT_FLOOD     bit_mask(6)
+#define PL_COND_FLAG_COOLANT_MIST      bit_mask(7)
 #define PL_COND_MOTION_MASK    (PL_COND_FLAG_RAPID_MOTION|PL_COND_FLAG_SYSTEM_MOTION|PL_COND_FLAG_NO_FEED_OVERRIDE)
 #define PL_COND_SPINDLE_MASK   (PL_COND_FLAG_SPINDLE_CW|PL_COND_FLAG_SPINDLE_CCW)
 #define PL_COND_ACCESSORY_MASK (PL_COND_FLAG_SPINDLE_CW|PL_COND_FLAG_SPINDLE_CCW|PL_COND_FLAG_COOLANT_FLOOD|PL_COND_FLAG_COOLANT_MIST)

@@ -22,11 +22,11 @@ void printString(const char *s)
 }
 
 
-//打印存储在PGM内存中的字符串
-void printPgmString(const char *s)
-{
-  printString(s);
-}
+// //打印存储在PGM内存中的字符串
+// void printPgmString(const char *s)
+// {
+//   printString(s);
+// }
 
 
 // void printIntegerInBase(unsigned long n, unsigned long base)
@@ -52,23 +52,25 @@ void printPgmString(const char *s)
 
 
 //打印基数为10的uint8变量。
-void print_uint8_base10(uint8_t n)
-{
-  uint8_t digit_a = 0;
-  uint8_t digit_b = 0;
-  if (n >= 100) { // 100-255
-    digit_a = '0' + n % 10;
-    n /= 10;
-  }
-  if (n >= 10) { // 10-99
-    digit_b = '0' + n % 10;
-    n /= 10;
-  }
-  serial_write('0' + n);
-  if (digit_b) { serial_write(digit_b); }
-  if (digit_a) { serial_write(digit_a); }
+// void print_uint8_base10(uint8_t n)
+// {
+//   uint8_t digit_a = 0;
+//   uint8_t digit_b = 0;
+//   if (n >= 100) { // 100-255
+//     digit_a = '0' + n % 10;
+//     n /= 10;
+//   }
+//   if (n >= 10) { // 10-99
+//     digit_b = '0' + n % 10;
+//     n /= 10;
+//   }
+//   serial_write('0' + n);
+//   if (digit_b) { serial_write(digit_b); }
+//   if (digit_a) { serial_write(digit_a); }
+// }
+void print_uint8_base10(uint8_t n) {
+  printf("%bd", n);
 }
-
 
 //以所需位数打印基数2中的uint8变量。
 //void print_uint8_base2_ndigit(uint8_t n, uint8_t digits) {
@@ -85,23 +87,26 @@ void print_uint8_base10(uint8_t n)
 //}
 
 
-void print_uint32_base10(uint32_t n)
-{
-	unsigned char buf[10];
-  uint8_t i = 0;
+// void print_uint32_base10(uint32_t n)
+// {
+// 	unsigned char buf[10];
+//   uint8_t i = 0;
 	
-  if (n == 0) {
-    serial_write('0');
-    return;
-  }
+//   if (n == 0) {
+//     serial_write('0');
+//     return;
+//   }
 
-  while (n > 0) {
-    buf[i++] = n % 10;
-    n /= 10;
-  }
+//   while (n > 0) {
+//     buf[i++] = n % 10;
+//     n /= 10;
+//   }
 
-  for (; i > 0; i--)
-    serial_write('0' + buf[i-1]);
+//   for (; i > 0; i--)
+//     serial_write('0' + buf[i-1]);
+// }
+void print_uint32_base10(uint32_t n) {
+  printf("%ld", n);
 }
 
 
@@ -119,45 +124,47 @@ void printInteger(long n)
 //通过立即转换为长整数，将浮点转换为字符串，长整数包含的数字比浮点多。
 //由计数器跟踪的小数位数可由用户设置。然后将整数有效地转换为字符串。
 //注意：AVR“%”和“/”整数操作非常有效。位移加速技术实际上只是稍微慢一点。我是通过艰苦的努力才发现这一点的。
-void printFloat(float n, uint8_t decimal_places)
-{
-	uint8_t decimals = decimal_places;
-	unsigned char buf[13];
-  uint8_t i = 0;
-  uint32_t a = 0;
-  if (n < 0) {
-    serial_write('-');
-    n = -n;
-  }
+// void printFloat(float n, uint8_t decimal_places)
+// {
+// 	uint8_t decimals = decimal_places;
+// 	unsigned char buf[13];
+//   uint8_t i = 0;
+//   uint32_t a = 0;
+//   if (n < 0) {
+//     serial_write('-');
+//     n = -n;
+//   }
 
-  while (decimals >= 2) { //快速将预期为E0的值转换为E-4。
-    n *= 100;
-    decimals -= 2;
-  }
-  if (decimals) { n *= 10; }
-  n += 0.5; // 添加舍入因子。 确保整个值的进位。
+//   while (decimals >= 2) { //快速将预期为E0的值转换为E-4。
+//     n *= 100;
+//     decimals -= 2;
+//   }
+//   if (decimals) { n *= 10; }
+//   n += 0.5; // 添加舍入因子。 确保整个值的进位。
 
-  //向后生成数字并以字符串形式存储。
-  i = 0;
-  a = (long)n;
-  while(a > 0) {
-    buf[i++] = (a % 10) + '0'; //获取数字
-    a /= 10;
-  }
-  while (i < decimal_places) {
-     buf[i++] = '0'; //将零填入小数点（n<1）
-  }
-  if (i == decimal_places) { //如果需要，填写前导零。
-    buf[i++] = '0';
-  }
+//   //向后生成数字并以字符串形式存储。
+//   i = 0;
+//   a = (long)n;
+//   while(a > 0) {
+//     buf[i++] = (a % 10) + '0'; //获取数字
+//     a /= 10;
+//   }
+//   while (i < decimal_places) {
+//      buf[i++] = '0'; //将零填入小数点（n<1）
+//   }
+//   if (i == decimal_places) { //如果需要，填写前导零。
+//     buf[i++] = '0';
+//   }
 
-  //打印生成的字符串。
-  for (; i > 0; i--) {
-    if (i == decimal_places) { serial_write('.'); } //在正确的位置插入小数点。
-    serial_write(buf[i-1]);
-  }
+//   //打印生成的字符串。
+//   for (; i > 0; i--) {
+//     if (i == decimal_places) { serial_write('.'); } //在正确的位置插入小数点。
+//     serial_write(buf[i-1]);
+//   }
+// }
+void printFloat(float n, uint8_t decimal_places) {
+  printf("%f", n);
 }
-
 
 //Grbl中使用的特殊变量类型的浮点值打印处理程序，在配置中定义。H
 //-坐标值：以英寸或毫米为单位处理所有位置或坐标值。

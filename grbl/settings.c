@@ -16,7 +16,7 @@
 
 settings_t settings;
 
-const settings_t defaults = {
+code const settings_t defaults = {
     DEFAULT_STEP_PULSE_MICROSECONDS,
     DEFAULT_STEPPER_IDLE_LOCK_TIME,
     DEFAULT_STEPPING_INVERT_MASK,

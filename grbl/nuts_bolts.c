@@ -33,7 +33,6 @@ uint8_t read_float(char *line, uint8_t *char_counter, float *float_ptr)
   uint8_t ndigit = 0;
   bool isdecimal = false;
 	  float fval;
-  fval = (float)intval;
 	
   //抓取第一个字符和递增指针。直线上不设空格。
   c = *ptr++;
@@ -70,7 +69,7 @@ uint8_t read_float(char *line, uint8_t *char_counter, float *float_ptr)
   if (!ndigit) { return(false); };
 
   //将整数转换为浮点。
-
+  fval = (float)intval;
 
   //应用十进制。对于预期的E0到E-4范围，应执行不超过两次浮点乘法。
   if (fval != 0) {

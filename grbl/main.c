@@ -39,7 +39,6 @@ int main(void)
 
   memset(sys_position,0,sizeof(sys_position)); // 清空机器位置。
   sei(); // 开启总中断。
-
   // 初始化系统状态
   #ifdef FORCE_INITIALIZATION_ALARM
     // 在系统上电或硬件重置时强制Grbl进入ALARM状态。
@@ -94,5 +93,5 @@ int main(void)
     protocol_main_loop();
 
   }
-  return 0;   /* 根本不会到达这里 */
+  //return 0;   /* 根本不会到达这里 */
 }
