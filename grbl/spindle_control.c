@@ -23,8 +23,6 @@
 void spindle_init()
 {
   
-    P1M0 |= 0x01; P1M1 &= ~0x01; 
-    P10 = 0;
     // PWMA_PS = 0x01;                             //引脚切换p2.0输出,默认p1.0
     PWMA_CCER1 = 0x00;                          //写CCMRx前必须先清零CCERx关闭通道
     PWMA_CCMR1 = 0x60;                          //设置CC1为PWMA输出模式
@@ -85,7 +83,7 @@ uint8_t spindle_get_state()
 //由主轴_init（）、主轴_set_speed（）、主轴_set_state（）和mc_reset（）调用。
 void spindle_stop()
 {
-    // PWMA_CCR1 = 10;                              //设置占空比时间
+    PWMA_CCR1 = 0;                              //设置占空比时间
 }
 
 
