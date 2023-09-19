@@ -69,7 +69,7 @@ void printString(const char *s)
 //   if (digit_a) { serial_write(digit_a); }
 // }
 void print_uint8_base10(uint8_t n) {
-  printf("%bd", n);
+  printf("%bu", n);
 }
 
 //以所需位数打印基数2中的uint8变量。
@@ -105,20 +105,20 @@ void print_uint8_base10(uint8_t n) {
 //   for (; i > 0; i--)
 //     serial_write('0' + buf[i-1]);
 // }
-void print_uint32_base10(uint32_t n) {
-  printf("%ld", n);
-}
+// void print_uint32_base10(uint32_t n) {
+//   printf("%lu", n);
+// }
 
 
-void printInteger(long n)
-{
-  if (n < 0) {
-    serial_write('-');
-    print_uint32_base10(-n);
-  } else {
-    print_uint32_base10(n);
-  }
-}
+// void printInteger(long n)
+// {
+//   if (n < 0) {
+//     serial_write('-');
+//     print_uint32_base10(-n);
+//   } else {
+//     print_uint32_base10(n);
+//   }
+// }
 
 
 //通过立即转换为长整数，将浮点转换为字符串，长整数包含的数字比浮点多。

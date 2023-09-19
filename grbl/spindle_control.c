@@ -28,7 +28,7 @@ void spindle_init()
     PWMA_CCER1 = 0x00;                          //写CCMRx前必须先清零CCERx关闭通道
     PWMA_CCMR1 = 0x60;                          //设置CC1为PWMA输出模式
     PWMA_CCER1 = 0x01;                          //使能CC1通道
-    // PWMA_CCR1 = 0;                              //设置占空比时间
+    PWMA_CCR1 = 0;                              //设置占空比时间
     PWMA_ARR = 999;                             //设置周期时间
     PWMA_ENO = 0x01;                            //使能PWM1P端口输出
     PWMA_BKR = 0x80;                            //使能主输出
@@ -92,8 +92,8 @@ void spindle_stop()
   //设置主轴速度PWM输出和启用引脚（如果配置）。由spindle_set_state（）和步进ISR调用。保持小规模和高效率的运行。
   void spindle_set_speed(uint8_t pwm_value)
   {
-       PWMA_CCR1 = pwm_value; //设置PWM输出电平。
-       serial_write(pwm_value);
+      //  PWMA_CCR1 = pwm_value; //设置PWM输出电平。
+       printf("%bd", pwm_value);
   }
 
 
@@ -144,6 +144,7 @@ void spindle_stop()
     //由spindle_set_state和步进段生成器调用。保持小规模和高效率的运行。
     uint8_t spindle_compute_pwm_value(float rpm) //328p PWM寄存器为8位。
     {
+
       uint8_t pwm_value;
       rpm *= (0.010*sys.spindle_speed_ovr); //按主轴速度覆盖值缩放。根据rpm最大/最小设置和编程rpm计算PWM寄存器值。
       if ((settings.rpm_min >= settings.rpm_max) || (rpm >= settings.rpm_max)) {
@@ -203,6 +204,7 @@ void spindle_stop()
       if (settings.flags & BITFLAG_LASER_MODE) { 
         if (state == SPINDLE_ENABLE_CCW) { rpm = 0.0; } //TODO:可能需要为rpm_min*（100/MAX_SPINDLE_SPEED_OVERRIDE）；
       }
+
       spindle_set_speed(spindle_compute_pwm_value(rpm));
     #endif
     #if (defined(USE_SPINDLE_DIR_AS_ENABLE_PIN) && \
