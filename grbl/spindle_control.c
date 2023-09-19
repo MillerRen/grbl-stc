@@ -23,12 +23,13 @@
 void spindle_init()
 {
   
-    // PWMA_PS = 0x01;                             //引脚切换p2.0输出,默认p1.0
+    // PWMA_PS = 0x01;                          //引脚切换p2.0输出,默认p1.0
+    PWMA_PSCR = 23;                             //预分频为1MHz
     PWMA_CCER1 = 0x00;                          //写CCMRx前必须先清零CCERx关闭通道
     PWMA_CCMR1 = 0x60;                          //设置CC1为PWMA输出模式
     PWMA_CCER1 = 0x01;                          //使能CC1通道
-    PWMA_CCR1 = 10;                              //设置占空比时间
-    PWMA_ARR = 500;                             //设置周期时间
+    PWMA_CCR1 = 0;                              //设置占空比时间
+    PWMA_ARR = 999;                             //设置周期时间，频率为1K
     PWMA_ENO = 0x01;                            //使能PWM1P端口输出
     PWMA_BKR = 0x80;                            //使能主输出
     PWMA_CR1 = 0x01;                            //开始计时
@@ -83,16 +84,19 @@ uint8_t spindle_get_state()
 //由主轴_init（）、主轴_set_speed（）、主轴_set_state（）和mc_reset（）调用。
 void spindle_stop()
 {
-    PWMA_CCR1 = 0;                              //设置占空比时间
+    PWMA_CCR1H = 0;                              //设置占空比时间
+    PWMA_CCR1L = 0;                              //设置占空比时间
+
 }
 
 
 #ifdef VARIABLE_SPINDLE
   //设置主轴速度PWM输出和启用引脚（如果配置）。由spindle_set_state（）和步进ISR调用。保持小规模和高效率的运行。
-  void spindle_set_speed(uint8_t pwm_value)
-  {
-       PWMA_CCR1 = pwm_value; //设置PWM输出电平。
-       printf("%bd", pwm_value);
+  void spindle_set_speed(uint16_t pwm_value)
+  {printf("%u", pwm_value);
+       PWMA_CCR1H = pwm_value >> 8; //设置PWM输出电平。
+       PWMA_CCR1L = pwm_value; //设置PWM输出电平。
+       
   }
 
 
@@ -141,10 +145,10 @@ void spindle_stop()
   #else 
   
     //由spindle_set_state和步进段生成器调用。保持小规模和高效率的运行。
-    uint8_t spindle_compute_pwm_value(float rpm) //328p PWM寄存器为8位。
+    uint16_t spindle_compute_pwm_value(float rpm) //328p PWM寄存器为8位。
     {
 
-      uint8_t pwm_value;
+      uint16_t pwm_value;
       rpm *= (0.010*sys.spindle_speed_ovr); //按主轴速度覆盖值缩放。根据rpm最大/最小设置和编程rpm计算PWM寄存器值。
       if ((settings.rpm_min >= settings.rpm_max) || (rpm >= settings.rpm_max)) {
         //不可能有PWM范围。设置简单的开/关主轴控制引脚状态。

@@ -42,10 +42,10 @@ uint8_t spindle_get_state();
   
 //为步进电机ISR快速设置主轴PWM。也称为主轴设置状态（）。
 //注：328p PWM寄存器为8位。
-  void spindle_set_speed(uint8_t pwm_value);
+  void spindle_set_speed(uint16_t pwm_value);
   
 //计算给定RPM的328p特定PWM寄存器值，以便快速更新。
-  uint8_t spindle_compute_pwm_value(float rpm);
+  uint16_t spindle_compute_pwm_value(float rpm);
   
 #else
   

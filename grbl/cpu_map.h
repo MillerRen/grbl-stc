@@ -120,7 +120,7 @@
 
 //可变主轴配置如下。除非你知道自己在做什么，否则不要改变。
 //注：仅在启用可变主轴时使用。
-    #define SPINDLE_PWM_MAX_VALUE     255//不要改变。328p快速PWM模式将最大值固定为255。
+    #define SPINDLE_PWM_MAX_VALUE     1000//不要改变。328p快速PWM模式将最大值固定为255。
     #ifndef SPINDLE_PWM_MIN_VALUE
       #define SPINDLE_PWM_MIN_VALUE   1//必须大于零。
     #endif
