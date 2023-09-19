@@ -33,12 +33,12 @@
 
 void limits_init()
 {
-  LIMIT_DDR &= ~(LIMIT_MASK); //设置为输入引脚
+  // LIMIT_DDR &= ~(LIMIT_MASK); //设置为输入引脚
 
   #ifdef DISABLE_LIMIT_PIN_PULL_UP
     LIMIT_PORT &= ~(LIMIT_MASK); //正常低电压运行。需要外部下拉。
   #else
-    LIMIT_PORT |= (LIMIT_MASK);  //启用内部上拉电阻器。正常高位运行。
+    // LIMIT_PORT |= (LIMIT_MASK);  //启用内部上拉电阻器。正常高位运行。
   #endif
 
   if (bit_istrue(settings.flags,BITFLAG_HARD_LIMIT_ENABLE)) {

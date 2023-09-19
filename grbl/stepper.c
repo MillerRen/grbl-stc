@@ -247,8 +247,8 @@ void st_go_idle()
     pin_state = true; // 覆盖， 禁用步进器。
   }
   if (bit_istrue(settings.flags,BITFLAG_INVERT_ST_ENABLE)) { pin_state = !pin_state; } //应用引脚反转。
-  if (pin_state) { STEPPERS_DISABLE_PORT |= (1<<STEPPERS_DISABLE_BIT); }
-  else { STEPPERS_DISABLE_PORT &= ~(1<<STEPPERS_DISABLE_BIT); }
+  // if (pin_state) { STEPPERS_DISABLE_PORT |= (1<<STEPPERS_DISABLE_BIT); }
+  // else { STEPPERS_DISABLE_PORT &= ~(1<<STEPPERS_DISABLE_BIT); }
 }
 
 
@@ -287,7 +287,7 @@ void TIMER1_COMPA_vect() // CTC和COMPA中断可以产生精确的定时
   if (busy) { return; } //忙标志用于避免重新进入该中断
 
   //在我们步进步进器之前，将方向引脚设置几纳秒
-  DIRECTION_PORT = (DIRECTION_PORT & ~DIRECTION_MASK) | (st.dir_outbits & DIRECTION_MASK);
+  // DIRECTION_PORT = (DIRECTION_PORT & ~DIRECTION_MASK) | (st.dir_outbits & DIRECTION_MASK);
   #ifdef ENABLE_DUAL_AXIS
     DIRECTION_PORT_DUAL = (DIRECTION_PORT_DUAL & ~DIRECTION_MASK_DUAL) | (st.dir_outbits_dual & DIRECTION_MASK_DUAL);
   #endif
@@ -450,7 +450,7 @@ void TIMER1_COMPA_vect() // CTC和COMPA中断可以产生精确的定时
 void TIMER0_OVF_vect()
 {
   //重置步进引脚（保留方向引脚）
-  STEP_PORT = (STEP_PORT & ~STEP_MASK) | (step_port_invert_mask & STEP_MASK);
+  // STEP_PORT = (STEP_PORT & ~STEP_MASK) | (step_port_invert_mask & STEP_MASK);
   #ifdef ENABLE_DUAL_AXIS
     STEP_PORT_DUAL = (STEP_PORT_DUAL & ~STEP_MASK_DUAL) | (step_port_invert_mask_dual & STEP_MASK_DUAL);
   #endif
@@ -509,8 +509,8 @@ void st_reset()
   st.dir_outbits = dir_port_invert_mask; //将方向位初始化为默认值。
 
   //初始化步进和方向端口引脚。
-  STEP_PORT = (STEP_PORT & ~STEP_MASK) | step_port_invert_mask;
-  DIRECTION_PORT = (DIRECTION_PORT & ~DIRECTION_MASK) | dir_port_invert_mask;
+  // STEP_PORT = (STEP_PORT & ~STEP_MASK) | step_port_invert_mask;
+  // DIRECTION_PORT = (DIRECTION_PORT & ~DIRECTION_MASK) | dir_port_invert_mask;
   
   #ifdef ENABLE_DUAL_AXIS
     st.dir_outbits_dual = dir_port_invert_mask_dual;
@@ -524,9 +524,9 @@ void st_reset()
 void stepper_init()
 {
   //配置步进和方向接口引脚
-  STEP_DDR |= STEP_MASK;
-  STEPPERS_DISABLE_DDR |= 1<<STEPPERS_DISABLE_BIT;
-  DIRECTION_DDR |= DIRECTION_MASK;
+  // STEP_DDR |= STEP_MASK;
+  // STEPPERS_DISABLE_DDR |= 1<<STEPPERS_DISABLE_BIT;
+  // DIRECTION_DDR |= DIRECTION_MASK;
   
   #ifdef ENABLE_DUAL_AXIS
     STEP_DDR_DUAL |= STEP_MASK_DUAL;

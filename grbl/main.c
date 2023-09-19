@@ -31,6 +31,7 @@ volatile uint8_t sys_rt_exec_accessory_override; // 用于主轴/冷却覆盖的
 
 int main(void)
 {
+  P_SW2 |= 0x80;
   // 开机后初始化系统
   serial_init();   // 设置串口波特率和中断。
   settings_init(); // 从EEPROM加载Grbl设置。

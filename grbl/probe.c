@@ -22,11 +22,11 @@ uint8_t probe_invert_mask;
 //探针引脚初始化例行程序。
 void probe_init()
 {
-  PROBE_DDR &= ~(PROBE_MASK); //配置为输入引脚
+  // PROBE_DDR &= ~(PROBE_MASK); //配置为输入引脚
   #ifdef DISABLE_PROBE_PIN_PULL_UP
     PROBE_PORT &= ~(PROBE_MASK); //正常低电压运行。需要外部下拉。
   #else
-    PROBE_PORT |= PROBE_MASK;    //启用内部上拉电阻器。正常高位运行。
+    // PROBE_PORT |= PROBE_MASK;    //启用内部上拉电阻器。正常高位运行。
   #endif
   probe_configure_invert_mask(false); //初始化反转掩码。
 }

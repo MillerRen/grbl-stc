@@ -17,7 +17,7 @@
 
 void coolant_init()
 {
-  COOLANT_FLOOD_DDR |= (1 << COOLANT_FLOOD_BIT); //配置为输出引脚
+  // COOLANT_FLOOD_DDR |= (1 << COOLANT_FLOOD_BIT); //配置为输出引脚
   #ifdef ENABLE_M7
     COOLANT_MIST_DDR |= (1 << COOLANT_MIST_BIT);
   #endif
@@ -56,7 +56,7 @@ void coolant_stop()
   #ifdef INVERT_COOLANT_FLOOD_PIN
     COOLANT_FLOOD_PORT |= (1 << COOLANT_FLOOD_BIT);
   #else
-    COOLANT_FLOOD_PORT &= ~(1 << COOLANT_FLOOD_BIT);
+    // COOLANT_FLOOD_PORT &= ~(1 << COOLANT_FLOOD_BIT);
   #endif
   #ifdef ENABLE_M7
     #ifdef INVERT_COOLANT_MIST_PIN
@@ -78,13 +78,13 @@ void coolant_set_state(uint8_t mode)
 		#ifdef INVERT_COOLANT_FLOOD_PIN
 			COOLANT_FLOOD_PORT &= ~(1 << COOLANT_FLOOD_BIT);
 		#else
-			COOLANT_FLOOD_PORT |= (1 << COOLANT_FLOOD_BIT);
+			// COOLANT_FLOOD_PORT |= (1 << COOLANT_FLOOD_BIT);
 		#endif
 	} else {
 	  #ifdef INVERT_COOLANT_FLOOD_PIN
 			COOLANT_FLOOD_PORT |= (1 << COOLANT_FLOOD_BIT);
 		#else
-			COOLANT_FLOOD_PORT &= ~(1 << COOLANT_FLOOD_BIT);
+			// COOLANT_FLOOD_PORT &= ~(1 << COOLANT_FLOOD_BIT);
 		#endif
 	}
   

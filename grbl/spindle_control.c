@@ -24,12 +24,13 @@ void spindle_init()
 {
   
     P1M0 |= 0x01; P1M1 &= ~0x01; 
+    P10 = 0;
     // PWMA_PS = 0x01;                             //引脚切换p2.0输出,默认p1.0
     PWMA_CCER1 = 0x00;                          //写CCMRx前必须先清零CCERx关闭通道
     PWMA_CCMR1 = 0x60;                          //设置CC1为PWMA输出模式
     PWMA_CCER1 = 0x01;                          //使能CC1通道
-    PWMA_CCR1 = 0;                              //设置占空比时间
-    PWMA_ARR = 999;                             //设置周期时间
+    PWMA_CCR1 = 10;                              //设置占空比时间
+    PWMA_ARR = 500;                             //设置周期时间
     PWMA_ENO = 0x01;                            //使能PWM1P端口输出
     PWMA_BKR = 0x80;                            //使能主输出
     PWMA_CR1 = 0x01;                            //开始计时
@@ -84,7 +85,7 @@ uint8_t spindle_get_state()
 //由主轴_init（）、主轴_set_speed（）、主轴_set_state（）和mc_reset（）调用。
 void spindle_stop()
 {
-    PWMA_CCR1 = 0;                              //设置占空比时间
+    // PWMA_CCR1 = 10;                              //设置占空比时间
 }
 
 
@@ -92,7 +93,7 @@ void spindle_stop()
   //设置主轴速度PWM输出和启用引脚（如果配置）。由spindle_set_state（）和步进ISR调用。保持小规模和高效率的运行。
   void spindle_set_speed(uint8_t pwm_value)
   {
-      //  PWMA_CCR1 = pwm_value; //设置PWM输出电平。
+       PWMA_CCR1 = pwm_value; //设置PWM输出电平。
        printf("%bd", pwm_value);
   }
 
@@ -193,9 +194,9 @@ void spindle_stop()
     
     #if !defined(USE_SPINDLE_DIR_AS_ENABLE_PIN) && !defined(ENABLE_DUAL_AXIS)
       if (state == SPINDLE_ENABLE_CW) {
-        SPINDLE_DIRECTION_PORT &= ~(1<<SPINDLE_DIRECTION_BIT);
+        // SPINDLE_DIRECTION_PORT &= ~(1<<SPINDLE_DIRECTION_BIT);
       } else {
-        SPINDLE_DIRECTION_PORT |= (1<<SPINDLE_DIRECTION_BIT);
+        // SPINDLE_DIRECTION_PORT |= (1<<SPINDLE_DIRECTION_BIT);
       }
     #endif
   

@@ -100,6 +100,7 @@ void memcpy_to_eeprom_with_checksum(unsigned int destination, char *source, unsi
 	unsigned char checksum = 0;
   // 写入之前擦除
 	eeprom_erase(destination);
+	// printf("write:%u ", destination);
 	cli();
 	// 一起写入版本号
 	if(destination < 512) {
@@ -129,10 +130,13 @@ void memcpy_to_eeprom_with_checksum(unsigned int destination, char *source, unsi
 
 	IAP_DISABLE();
 	sei();
+	// printf("checksum:%bd\n",checksum);
+
 }
 
 int memcpy_from_eeprom_with_checksum(char *destination, unsigned int source, unsigned int _size) {
 	unsigned char _data, checksum = 0;
+	// printf("read:%u", source);
   IAP_ENABLE();
 	IAP_READ();
 	for (; _size > 0; _size--)
@@ -151,6 +155,7 @@ int memcpy_from_eeprom_with_checksum(char *destination, unsigned int source, uns
 	IAP_ADDRH = source >> 8;
 	IAP_TRIG();
 	_data = IAP_DATA;
+	// printf(" checksum:%bd data:%bd\n",checksum, _data);
 
 	return (checksum == _data);
 }

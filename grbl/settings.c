@@ -61,6 +61,8 @@ void settings_store_startup_line(uint8_t n, char *line)
   #ifdef FORCE_BUFFER_SYNC_DURING_EEPROM_WRITE
     protocol_buffer_synchronize(); //启动行可能包含运动并正在执行。
   #endif
+  // printf("write startup\n");
+
   memcpy_to_eeprom_with_checksum(addr,(char*)line, LINE_BUFFER_SIZE);
 }
 
@@ -69,6 +71,8 @@ void settings_store_startup_line(uint8_t n, char *line)
 //注意：此函数只能在空闲状态下调用。
 void settings_store_build_info(char *line)
 {
+  // printf("write buildinfo\n");
+
   //生成信息只能在状态为空闲时存储。
   memcpy_to_eeprom_with_checksum(EEPROM_ADDR_BUILD_INFO,(char*)line, LINE_BUFFER_SIZE);
 }
@@ -81,6 +85,8 @@ void settings_write_coord_data(uint8_t coord_select, float *coord_data)
   #ifdef FORCE_BUFFER_SYNC_DURING_EEPROM_WRITE
     protocol_buffer_synchronize();
   #endif
+  // printf("write coorddata\n");
+
   memcpy_to_eeprom_with_checksum(addr,(char*)coord_data, sizeof(float)*N_AXIS);
 }
 
@@ -90,6 +96,8 @@ void settings_write_coord_data(uint8_t coord_select, float *coord_data)
 void write_global_settings()
 {
   //eeprom_put_char(0, SETTINGS_VERSION);
+  // printf("write global\n");
+
   memcpy_to_eeprom_with_checksum(EEPROM_ADDR_GLOBAL, (char*)&settings, sizeof(settings_t));
 }
 
@@ -165,6 +173,7 @@ defaults.max_travel[Z_AXIS] = (-DEFAULT_Z_MAX_TRAVEL);
 uint8_t settings_read_startup_line(uint8_t n, char *line)
 {
   uint32_t addr = n*(LINE_BUFFER_SIZE+1)+EEPROM_ADDR_STARTUP_BLOCK;
+  // printf("read startup block\n");
   if (!(memcpy_from_eeprom_with_checksum((char*)line, addr, LINE_BUFFER_SIZE))) {
     //使用默认值重置行
     line[0] = 0; //空行
@@ -178,6 +187,7 @@ uint8_t settings_read_startup_line(uint8_t n, char *line)
 //从EEPROM读取启动行。更新指向的线字符串数据。
 uint8_t settings_read_build_info(char *line)
 {
+  // printf("read buildinfo\n");
   if (!(memcpy_from_eeprom_with_checksum((char*)line, EEPROM_ADDR_BUILD_INFO, LINE_BUFFER_SIZE))) {
     //使用默认值重置行
     line[0] = 0; //空行
@@ -192,9 +202,12 @@ uint8_t settings_read_build_info(char *line)
 uint8_t settings_read_coord_data(uint8_t coord_select, float *coord_data)
 {
   uint32_t addr = coord_select*(sizeof(float)*N_AXIS+1) + EEPROM_ADDR_PARAMETERS;
+  // printf("read coorddata\n");
   if (!(memcpy_from_eeprom_with_checksum((char*)coord_data, addr, sizeof(float)*N_AXIS))) {
     //使用默认零向量重置
     clear_vector_float(coord_data);
+  // printf("write coorddata\n");
+
     settings_write_coord_data(coord_select,coord_data);
     return(false);
   }
@@ -207,6 +220,7 @@ uint8_t read_global_settings() {
   // Check version-byte of eeprom
   uint8_t version = eeprom_get_char(0);
   if (version == SETTINGS_VERSION) {
+    // printf("read global\n");
     //读取设置记录并检查校验和
     if (!(memcpy_from_eeprom_with_checksum((char*)&settings, EEPROM_ADDR_GLOBAL, sizeof(settings_t)))) {
       return(false);
