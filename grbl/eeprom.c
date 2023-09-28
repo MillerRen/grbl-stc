@@ -25,7 +25,7 @@
 //#include <avr/interrupt.h>
 #include "eeprom.h"
 
-void eeprom_erase(int addr)
+void eeprom_erase(unsigned int addr)
 {
 	cli();
 	IAP_ENABLE();
@@ -80,17 +80,17 @@ unsigned char eeprom_get_char( unsigned int addr )
  */
 void eeprom_put_char( unsigned int addr, unsigned char new_value )
 {
-	 	cli(); //确保写入操作的原子操作。
+	cli(); 								//确保写入操作的原子操作。
  	IAP_ENABLE();                       //设置等待时间，允许IAP操作，送一次就够
  	IAP_WRITE();                        //宏调用, 送字节写命令
- 	IAP_ADDRL = addr;                           //设置IAP低地址
-   IAP_ADDRH = addr >> 8;                      //设置IAP高地址
-   IAP_DATA = new_value;
+ 	IAP_ADDRL = addr;                   //设置IAP低地址
+    IAP_ADDRH = addr >> 8;              //设置IAP高地址
+    IAP_DATA = new_value;
  	IAP_TRIG();
  	_nop_();
  	IAP_DISABLE();
 	
- 	sei(); //恢复中断标志状态。
+ 	sei(); 								//恢复中断标志状态。
 }
 
 //作为Grbl的一部分添加的扩展
@@ -98,33 +98,33 @@ void eeprom_put_char( unsigned int addr, unsigned char new_value )
 
 void memcpy_to_eeprom_with_checksum(unsigned int destination, char *source, unsigned int size) {
 	unsigned char checksum = 0;
-  // 写入之前擦除
-	eeprom_erase(destination);
+  	// 写入之前擦除
+	// eeprom_erase(destination);
 	// printf("write:%u ", destination);
 	cli();
 	// 一起写入版本号
-	if(destination < 512) {
-	IAP_ENABLE();                       //设置等待时间，允许IAP操作，送一次就够
-	IAP_WRITE();                        //宏调用, 送字节写命令
-	IAP_ADDRL = 0;                      // 在最开始处添加配置的版本号
-	IAP_ADDRH = 0;
-	IAP_DATA  = SETTINGS_VERSION;
-	IAP_TRIG();
-	}
+	// if(destination < 512) {
+	// IAP_ENABLE();                       //设置等待时间，允许IAP操作，送一次就够
+	// IAP_WRITE();                        //宏调用, 送字节写命令
+	// IAP_ADDRL = 0;                      // 在最开始处添加配置的版本号
+	// IAP_ADDRH = 0;
+	// IAP_DATA  = SETTINGS_VERSION;
+	// IAP_TRIG();
+	// }
 	// 持续写入设置数据
 	for (; size > 0; size--)
 	{
 		checksum = (checksum << 1) || (checksum >> 7);
 		checksum += *source;
 		IAP_ADDRL = destination;                           //设置IAP低地址
-    IAP_ADDRH = destination >> 8;                      //设置IAP高地址
+    	IAP_ADDRH = destination >> 8;                      //设置IAP高地址
 		IAP_DATA = *source;
 		IAP_TRIG();
 		destination++;
 		source++;
 	}
 	IAP_ADDRL = destination;                           //设置IAP低地址
-  IAP_ADDRH = destination >> 8;                      //设置IAP高地址
+  	IAP_ADDRH = destination >> 8;                      //设置IAP高地址
 	IAP_DATA = checksum;
 	IAP_TRIG();
 
@@ -137,7 +137,7 @@ void memcpy_to_eeprom_with_checksum(unsigned int destination, char *source, unsi
 int memcpy_from_eeprom_with_checksum(char *destination, unsigned int source, unsigned int _size) {
 	unsigned char _data, checksum = 0;
 	// printf("read:%u", source);
-  IAP_ENABLE();
+  	IAP_ENABLE();
 	IAP_READ();
 	for (; _size > 0; _size--)
 	{

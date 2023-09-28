@@ -57,11 +57,11 @@ settings_t defaults;
 //将启动行存储到EEPROM中的方法
 void settings_store_startup_line(uint8_t n, char *line)
 {
-	uint32_t addr = n*(LINE_BUFFER_SIZE+1)+EEPROM_ADDR_STARTUP_BLOCK;
+	uint32_t addr = n*0+EEPROM_ADDR_STARTUP_BLOCK;
   #ifdef FORCE_BUFFER_SYNC_DURING_EEPROM_WRITE
     protocol_buffer_synchronize(); //启动行可能包含运动并正在执行。
   #endif
-  // printf("write startup\n");
+  // printf("write startup block: %ld\n", addr);
 
   memcpy_to_eeprom_with_checksum(addr,(char*)line, LINE_BUFFER_SIZE);
 }
@@ -72,7 +72,7 @@ void settings_store_startup_line(uint8_t n, char *line)
 void settings_store_build_info(char *line)
 {
   // printf("write buildinfo\n");
-
+  eeprom_erase(EEPROM_ADDR_BUILD_INFO);
   //生成信息只能在状态为空闲时存储。
   memcpy_to_eeprom_with_checksum(EEPROM_ADDR_BUILD_INFO,(char*)line, LINE_BUFFER_SIZE);
 }
@@ -86,7 +86,6 @@ void settings_write_coord_data(uint8_t coord_select, float *coord_data)
     protocol_buffer_synchronize();
   #endif
   // printf("write coorddata\n");
-
   memcpy_to_eeprom_with_checksum(addr,(char*)coord_data, sizeof(float)*N_AXIS);
 }
 
@@ -95,8 +94,9 @@ void settings_write_coord_data(uint8_t coord_select, float *coord_data)
 //注意：此函数只能在空闲状态下调用。
 void write_global_settings()
 {
-  //eeprom_put_char(0, SETTINGS_VERSION);
-  // printf("write global\n");
+  eeprom_erase(0);
+  eeprom_put_char(0, SETTINGS_VERSION);
+  printf("write global\n");
 
   memcpy_to_eeprom_with_checksum(EEPROM_ADDR_GLOBAL, (char*)&settings, sizeof(settings_t));
 }
@@ -106,20 +106,20 @@ void write_global_settings()
 void settings_restore(uint8_t restore_flag) {
   if (restore_flag & SETTINGS_RESTORE_DEFAULTS) {    
     defaults.pulse_microseconds = DEFAULT_STEP_PULSE_MICROSECONDS;
-defaults.stepper_idle_lock_time = DEFAULT_STEPPER_IDLE_LOCK_TIME;
-defaults.step_invert_mask = DEFAULT_STEPPING_INVERT_MASK;
-defaults.dir_invert_mask = DEFAULT_DIRECTION_INVERT_MASK;
-defaults.status_report_mask = DEFAULT_STATUS_REPORT_MASK;
-defaults.junction_deviation = DEFAULT_JUNCTION_DEVIATION;
-defaults.arc_tolerance = DEFAULT_ARC_TOLERANCE;
-defaults.rpm_max = DEFAULT_SPINDLE_RPM_MAX;
-defaults.rpm_min = DEFAULT_SPINDLE_RPM_MIN;
-defaults.homing_dir_mask = DEFAULT_HOMING_DIR_MASK;
-defaults.homing_feed_rate = DEFAULT_HOMING_FEED_RATE;
-defaults.homing_seek_rate = DEFAULT_HOMING_SEEK_RATE;
-defaults.homing_debounce_delay = DEFAULT_HOMING_DEBOUNCE_DELAY;
-defaults.homing_pulloff = DEFAULT_HOMING_PULLOFF;
-defaults.flags = (DEFAULT_REPORT_INCHES << BIT_REPORT_INCHES) | \
+    defaults.stepper_idle_lock_time = DEFAULT_STEPPER_IDLE_LOCK_TIME;
+    defaults.step_invert_mask = DEFAULT_STEPPING_INVERT_MASK;
+    defaults.dir_invert_mask = DEFAULT_DIRECTION_INVERT_MASK;
+    defaults.status_report_mask = DEFAULT_STATUS_REPORT_MASK;
+    defaults.junction_deviation = DEFAULT_JUNCTION_DEVIATION;
+    defaults.arc_tolerance = DEFAULT_ARC_TOLERANCE;
+    defaults.rpm_max = DEFAULT_SPINDLE_RPM_MAX;
+    defaults.rpm_min = DEFAULT_SPINDLE_RPM_MIN;
+    defaults.homing_dir_mask = DEFAULT_HOMING_DIR_MASK;
+    defaults.homing_feed_rate = DEFAULT_HOMING_FEED_RATE;
+    defaults.homing_seek_rate = DEFAULT_HOMING_SEEK_RATE;
+    defaults.homing_debounce_delay = DEFAULT_HOMING_DEBOUNCE_DELAY;
+    defaults.homing_pulloff = DEFAULT_HOMING_PULLOFF;
+    defaults.flags = (DEFAULT_REPORT_INCHES << BIT_REPORT_INCHES) | \
           (DEFAULT_LASER_MODE << BIT_LASER_MODE) | \
           (DEFAULT_INVERT_ST_ENABLE << BIT_INVERT_ST_ENABLE) | \
           (DEFAULT_HARD_LIMIT_ENABLE << BIT_HARD_LIMIT_ENABLE) | \
@@ -127,18 +127,18 @@ defaults.flags = (DEFAULT_REPORT_INCHES << BIT_REPORT_INCHES) | \
           (DEFAULT_SOFT_LIMIT_ENABLE << BIT_SOFT_LIMIT_ENABLE) | \
           (DEFAULT_INVERT_LIMIT_PINS << BIT_INVERT_LIMIT_PINS) | \
           (DEFAULT_INVERT_PROBE_PIN << BIT_INVERT_PROBE_PIN);
-defaults.steps_per_mm[X_AXIS] = DEFAULT_X_STEPS_PER_MM;
-defaults.steps_per_mm[Y_AXIS] = DEFAULT_Y_STEPS_PER_MM;
-defaults.steps_per_mm[Z_AXIS] = DEFAULT_Z_STEPS_PER_MM;
-defaults.max_rate[X_AXIS] = DEFAULT_X_MAX_RATE;
-defaults.max_rate[Y_AXIS] = DEFAULT_Y_MAX_RATE;
-defaults.max_rate[Z_AXIS] = DEFAULT_Z_MAX_RATE;
-defaults.acceleration[X_AXIS] = DEFAULT_X_ACCELERATION;
-defaults.acceleration[Y_AXIS] = DEFAULT_Y_ACCELERATION;
-defaults.acceleration[Z_AXIS] = DEFAULT_Z_ACCELERATION;
-defaults.max_travel[X_AXIS] = (-DEFAULT_X_MAX_TRAVEL);
-defaults.max_travel[Y_AXIS] = (-DEFAULT_Y_MAX_TRAVEL);
-defaults.max_travel[Z_AXIS] = (-DEFAULT_Z_MAX_TRAVEL);
+    defaults.steps_per_mm[X_AXIS] = DEFAULT_X_STEPS_PER_MM;
+    defaults.steps_per_mm[Y_AXIS] = DEFAULT_Y_STEPS_PER_MM;
+    defaults.steps_per_mm[Z_AXIS] = DEFAULT_Z_STEPS_PER_MM;
+    defaults.max_rate[X_AXIS] = DEFAULT_X_MAX_RATE;
+    defaults.max_rate[Y_AXIS] = DEFAULT_Y_MAX_RATE;
+    defaults.max_rate[Z_AXIS] = DEFAULT_Z_MAX_RATE;
+    defaults.acceleration[X_AXIS] = DEFAULT_X_ACCELERATION;
+    defaults.acceleration[Y_AXIS] = DEFAULT_Y_ACCELERATION;
+    defaults.acceleration[Z_AXIS] = DEFAULT_Z_ACCELERATION;
+    defaults.max_travel[X_AXIS] = (-DEFAULT_X_MAX_TRAVEL);
+    defaults.max_travel[Y_AXIS] = (-DEFAULT_Y_MAX_TRAVEL);
+    defaults.max_travel[Z_AXIS] = (-DEFAULT_Z_MAX_TRAVEL);
     settings = defaults;
 
     write_global_settings();
@@ -172,11 +172,12 @@ defaults.max_travel[Z_AXIS] = (-DEFAULT_Z_MAX_TRAVEL);
 //从EEPROM读取启动行。更新指向的线字符串数据。
 uint8_t settings_read_startup_line(uint8_t n, char *line)
 {
-  uint32_t addr = n*(LINE_BUFFER_SIZE+1)+EEPROM_ADDR_STARTUP_BLOCK;
-  // printf("read startup block\n");
+  uint32_t addr = n*0+EEPROM_ADDR_STARTUP_BLOCK;
+  // printf("read startup block: %ld\n", addr);
   if (!(memcpy_from_eeprom_with_checksum((char*)line, addr, LINE_BUFFER_SIZE))) {
     //使用默认值重置行
     line[0] = 0; //空行
+    // printf("read startup block fail write startup line\n");
     settings_store_startup_line(n, line);
     return(false);
   }
@@ -202,12 +203,12 @@ uint8_t settings_read_build_info(char *line)
 uint8_t settings_read_coord_data(uint8_t coord_select, float *coord_data)
 {
   uint32_t addr = coord_select*(sizeof(float)*N_AXIS+1) + EEPROM_ADDR_PARAMETERS;
-  // printf("read coorddata\n");
+  printf("read coorddata\n");
   if (!(memcpy_from_eeprom_with_checksum((char*)coord_data, addr, sizeof(float)*N_AXIS))) {
     //使用默认零向量重置
     clear_vector_float(coord_data);
-  // printf("write coorddata\n");
-
+    printf("read coorddata fail\n");
+    printf("write coorddata\n");
     settings_write_coord_data(coord_select,coord_data);
     return(false);
   }
@@ -237,8 +238,8 @@ uint8_t settings_store_global_setting(uint8_t parameter, float value) {
 	uint8_t set_idx = 0;
   if (value < 0.0) { return(STATUS_NEGATIVE_VALUE); }
   if (parameter >= AXIS_SETTINGS_START_VAL) {
-    //存储轴配置。由轴设置设置的轴编号顺序定义。
-//注意：确保设置索引与打印的 report.c设置相对应。
+  //存储轴配置。由轴设置设置的轴编号顺序定义。
+  //注意：确保设置索引与打印的 report.c设置相对应。
     parameter -= AXIS_SETTINGS_START_VAL;
     while (set_idx < AXIS_N_SETTINGS) {
       if (parameter < N_AXIS) {

@@ -36,7 +36,7 @@
 #define	IAP_ENABLE()		IAP_CONTR = IAP_EN; IAP_TPS = F_CPU / 1000000
 #define	IAP_DISABLE()		IAP_CONTR = 0; IAP_CMD = 0; IAP_TRIG = 0; IAP_ADDRH = 0xff; IAP_ADDRL = 0xff
 
-
+void eeprom_erase(unsigned int addr);
 unsigned char eeprom_get_char(unsigned int addr);
 void eeprom_put_char(unsigned int addr, unsigned char new_value);
 void memcpy_to_eeprom_with_checksum(unsigned int destination, char *source, unsigned int size);

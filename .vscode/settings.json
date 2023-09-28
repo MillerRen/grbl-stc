@@ -4,6 +4,8 @@
         "compat.h": "c",
         "stdio.h": "c",
         "STDIO.H": "cpp",
-        "PUTCHAR.C": "cpp"
+        "PUTCHAR.C": "cpp",
+        "grbl.h": "c",
+        "eeprom.h": "c"
     }
 }

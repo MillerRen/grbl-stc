@@ -49,16 +49,13 @@
 
 //定义归位/硬限位开关输入引脚和限位中断向量。
 //注意：所有限制位引脚必须位于同一端口上，但不能位于具有其他输入引脚（控制）的端口上。
-  #define LIMIT_DDR        P2
-  #define LIMIT_PIN        P2M0
+  #define LIMIT_DDR        P1M0
+  #define LIMIT_PIN        P3
   #define LIMIT_PORT       P2M0
-  #define X_LIMIT_BIT      1  // Uno数字管脚9
-  #define Y_LIMIT_BIT      2//Uno数字管脚10
-  #ifdef VARIABLE_SPINDLE//Z限制引脚和主轴启用已交换，以访问引脚11上的硬件PWM。
-    #define Z_LIMIT_BIT	   4 // Uno数字管脚12
-  #else
-    #define Z_LIMIT_BIT    3//Uno数字管脚11
-  #endif
+  #define X_LIMIT_BIT      2  // Uno数字管脚9
+  #define Y_LIMIT_BIT      3//Uno数字管脚10
+  #define Z_LIMIT_BIT	     4 // Uno数字管脚12
+
   #if !defined(ENABLE_DUAL_AXIS)
     #define LIMIT_MASK     ((1<<X_LIMIT_BIT)|(1<<Y_LIMIT_BIT)|(1<<Z_LIMIT_BIT))//所有限制位
   #endif
@@ -69,7 +66,7 @@
 //定义用户控制（循环启动、复位、进给保持）输入引脚。
 //注意：所有控制管脚必须位于同一端口上，而不是位于具有其他输入管脚的端口上（限位）。
   #define CONTROL_DDR       P3
-  #define CONTROL_PIN       P3
+  #define CONTROL_PIN       P1INTF
   #define CONTROL_PORT      P3
   #define CONTROL_RESET_BIT         0//Uno模拟引脚0
   #define CONTROL_FEED_HOLD_BIT     1//Uno模拟引脚1
@@ -83,7 +80,7 @@
 
   //定义探针开关输入引脚。
   #define PROBE_DDR       P3
-  #define PROBE_PIN       P3
+  #define PROBE_PIN       P1INTF
   #define PROBE_PORT      P3
   #define PROBE_BIT       5//Uno模拟引脚5
   #define PROBE_MASK      (1<<PROBE_BIT)

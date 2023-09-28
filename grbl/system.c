@@ -33,19 +33,19 @@ void system_init()
 uint8_t system_control_get_state()
 {
   uint8_t control_state = 0;
-  uint8_t pin = (CONTROL_PIN & CONTROL_MASK) ^ CONTROL_MASK;
-  #ifdef INVERT_CONTROL_PIN_MASK
-    pin ^= INVERT_CONTROL_PIN_MASK;
-  #endif
-  if (pin) {
-    #ifdef ENABLE_SAFETY_DOOR_INPUT_PIN
-      if (bit_istrue(pin,(1<<CONTROL_SAFETY_DOOR_BIT))) { control_state |= CONTROL_PIN_INDEX_SAFETY_DOOR; }
-    #else
-      if (bit_istrue(pin,(1<<CONTROL_FEED_HOLD_BIT))) { control_state |= CONTROL_PIN_INDEX_FEED_HOLD; }
-    #endif
-    if (bit_istrue(pin,(1<<CONTROL_RESET_BIT))) { control_state |= CONTROL_PIN_INDEX_RESET; }
-    if (bit_istrue(pin,(1<<CONTROL_CYCLE_START_BIT))) { control_state |= CONTROL_PIN_INDEX_CYCLE_START; }
-  }
+  // uint8_t pin = (CONTROL_PIN & CONTROL_MASK) ^ CONTROL_MASK;
+  // #ifdef INVERT_CONTROL_PIN_MASK
+  //   pin ^= INVERT_CONTROL_PIN_MASK;
+  // #endif
+  // if (pin) {
+  //   #ifdef ENABLE_SAFETY_DOOR_INPUT_PIN
+  //     if (bit_istrue(pin,(1<<CONTROL_SAFETY_DOOR_BIT))) { control_state |= CONTROL_PIN_INDEX_SAFETY_DOOR; }
+  //   #else
+  //     if (bit_istrue(pin,(1<<CONTROL_FEED_HOLD_BIT))) { control_state |= CONTROL_PIN_INDEX_FEED_HOLD; }
+  //   #endif
+  //   if (bit_istrue(pin,(1<<CONTROL_RESET_BIT))) { control_state |= CONTROL_PIN_INDEX_RESET; }
+  //   if (bit_istrue(pin,(1<<CONTROL_CYCLE_START_BIT))) { control_state |= CONTROL_PIN_INDEX_CYCLE_START; }
+  // }
   return(control_state);
 }
 
@@ -345,39 +345,47 @@ uint8_t system_check_travel_limits(float *target)
 void system_set_exec_state_flag(uint8_t mask) {
   cli();
   sys_rt_exec_state |= (mask);
+  sei();
 }
 
 void system_clear_exec_state_flag(uint8_t mask) {
   cli();
   sys_rt_exec_state &= ~(mask);
+  sei();
 }
 
 void system_set_exec_alarm(uint8_t alarm_code) {
   cli();
   sys_rt_exec_alarm = alarm_code;
+  sei();
 }
 
 void system_clear_exec_alarm() {
   cli();
   sys_rt_exec_alarm = 0;
+  sei();
 }
 
 void system_set_exec_motion_override_flag(uint8_t mask) {
   cli();
   sys_rt_exec_motion_override |= (mask);
+  sei();
 }
 
 void system_set_exec_accessory_override_flag(uint8_t mask) {
   cli();
   sys_rt_exec_accessory_override |= (mask);
+  sei();
 }
 
 void system_clear_exec_motion_overrides() {
   cli();
   sys_rt_exec_motion_override = 0;
+  sei();
 }
 
 void system_clear_exec_accessory_overrides() {
   cli();
   sys_rt_exec_accessory_override = 0;
+  sei();
 }

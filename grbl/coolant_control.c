@@ -29,22 +29,23 @@ void coolant_init()
 uint8_t coolant_get_state()
 {
   uint8_t cl_state = COOLANT_STATE_DISABLE;
-  #ifdef INVERT_COOLANT_FLOOD_PIN
-    if (bit_isfalse(COOLANT_FLOOD_PORT,(1 << COOLANT_FLOOD_BIT))) {
-  #else
-    if (bit_istrue(COOLANT_FLOOD_PORT,(1 << COOLANT_FLOOD_BIT))) {
-  #endif
-    cl_state |= COOLANT_STATE_FLOOD;
-  }
-  #ifdef ENABLE_M7
-    #ifdef INVERT_COOLANT_MIST_PIN
-      if (bit_isfalse(COOLANT_MIST_PORT,(1 << COOLANT_MIST_BIT))) {
-    #else
-      if (bit_istrue(COOLANT_MIST_PORT,(1 << COOLANT_MIST_BIT))) {
-    #endif
-      cl_state |= COOLANT_STATE_MIST;
-    }
-  #endif
+  // #ifdef INVERT_COOLANT_FLOOD_PIN
+  //   if (bit_isfalse(COOLANT_FLOOD_PORT,(1 << COOLANT_FLOOD_BIT))) {
+  // #else
+  //   if (bit_istrue(COOLANT_FLOOD_PORT,(1 << COOLANT_FLOOD_BIT))) {
+  // #endif
+  //   cl_state |= COOLANT_STATE_FLOOD;
+  // }
+  // #ifdef ENABLE_M7
+  //   #ifdef INVERT_COOLANT_MIST_PIN
+  //     if (bit_isfalse(COOLANT_MIST_PORT,(1 << COOLANT_MIST_BIT))) {
+  //   #else
+  //     if (bit_istrue(COOLANT_MIST_PORT,(1 << COOLANT_MIST_BIT))) {
+  //   #endif
+  //     cl_state |= COOLANT_STATE_MIST;
+  //   }
+  // #endif
+  
   return(cl_state);
 }
 
