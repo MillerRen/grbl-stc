@@ -13,7 +13,6 @@
 */
 
 #include "grbl.h"
-#include "eeprom.h"
 
 //注：g代码标准将最大行号定义为99999。
 //这似乎是一个任意值，某些GUI可能需要更多。
