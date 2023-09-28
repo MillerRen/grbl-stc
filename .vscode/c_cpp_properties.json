@@ -4,7 +4,7 @@
             "name": "Target 1",
             "includePath": [
                 "d:\\STC\\grbl_stc8\\grbl",
-                "C:\\Keil_v5\\C51\\INC"
+                "C:\\Keil_v5\\C51\\INC\\**"
             ],
             "defines": [
                 "__C51__",

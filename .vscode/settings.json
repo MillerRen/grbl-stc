@@ -6,6 +6,7 @@
         "STDIO.H": "cpp",
         "PUTCHAR.C": "cpp",
         "grbl.h": "c",
-        "eeprom.h": "c"
+        "eeprom.h": "c",
+        "stc8h.h": "c"
     }
 }
