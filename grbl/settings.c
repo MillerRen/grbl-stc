@@ -16,43 +16,47 @@
 
 settings_t settings;
 
-settings_t defaults;
+code const settings_t defaults = {
+  DEFAULT_X_STEPS_PER_MM,
+    DEFAULT_Y_STEPS_PER_MM,
+    DEFAULT_Z_STEPS_PER_MM,
+    DEFAULT_X_MAX_RATE,
+    DEFAULT_Y_MAX_RATE,
+    DEFAULT_Z_MAX_RATE,
+    DEFAULT_X_ACCELERATION,
+    DEFAULT_Y_ACCELERATION,
+    DEFAULT_Z_ACCELERATION,
+    (-DEFAULT_X_MAX_TRAVEL),
+    (-DEFAULT_Y_MAX_TRAVEL),
+    (-DEFAULT_Z_MAX_TRAVEL),
 
-// code const settings_t defaults = {
-//     DEFAULT_STEP_PULSE_MICROSECONDS,
-//     DEFAULT_STEPPER_IDLE_LOCK_TIME,
-//     DEFAULT_STEPPING_INVERT_MASK,
-//     DEFAULT_DIRECTION_INVERT_MASK,
-//     DEFAULT_STATUS_REPORT_MASK,
-//     DEFAULT_JUNCTION_DEVIATION,
-//     DEFAULT_ARC_TOLERANCE,
-//     DEFAULT_SPINDLE_RPM_MAX,
-//     DEFAULT_SPINDLE_RPM_MIN,
-//     DEFAULT_HOMING_DIR_MASK,
-//     DEFAULT_HOMING_FEED_RATE,
-//     DEFAULT_HOMING_SEEK_RATE,
-//     DEFAULT_HOMING_DEBOUNCE_DELAY,
-//     DEFAULT_HOMING_PULLOFF,
-//     (DEFAULT_REPORT_INCHES << BIT_REPORT_INCHES) | \
-//              (DEFAULT_LASER_MODE << BIT_LASER_MODE) | \
-//              (DEFAULT_INVERT_ST_ENABLE << BIT_INVERT_ST_ENABLE) | \
-//              (DEFAULT_HARD_LIMIT_ENABLE << BIT_HARD_LIMIT_ENABLE) | \
-//              (DEFAULT_HOMING_ENABLE << BIT_HOMING_ENABLE) | \
-//              (DEFAULT_SOFT_LIMIT_ENABLE << BIT_SOFT_LIMIT_ENABLE) | \
-//              (DEFAULT_INVERT_LIMIT_PINS << BIT_INVERT_LIMIT_PINS) | \
-//              (DEFAULT_INVERT_PROBE_PIN << BIT_INVERT_PROBE_PIN),
-//     DEFAULT_X_STEPS_PER_MM,
-//     DEFAULT_Y_STEPS_PER_MM,
-//     DEFAULT_Z_STEPS_PER_MM,
-//     DEFAULT_X_MAX_RATE,
-//     DEFAULT_Y_MAX_RATE,
-//     DEFAULT_Z_MAX_RATE,
-//     DEFAULT_X_ACCELERATION,
-//     DEFAULT_Y_ACCELERATION,
-//     DEFAULT_Z_ACCELERATION,
-//     (-DEFAULT_X_MAX_TRAVEL),
-//     (-DEFAULT_Y_MAX_TRAVEL),
-//     (-DEFAULT_Z_MAX_TRAVEL)};
+    DEFAULT_STEP_PULSE_MICROSECONDS,
+    DEFAULT_STEPPING_INVERT_MASK,
+    DEFAULT_DIRECTION_INVERT_MASK,
+    DEFAULT_STEPPER_IDLE_LOCK_TIME,
+    DEFAULT_STATUS_REPORT_MASK,
+    DEFAULT_JUNCTION_DEVIATION,
+    DEFAULT_ARC_TOLERANCE,
+    DEFAULT_SPINDLE_RPM_MAX,
+    DEFAULT_SPINDLE_RPM_MIN,
+
+    (DEFAULT_REPORT_INCHES << BIT_REPORT_INCHES) | \
+             (DEFAULT_LASER_MODE << BIT_LASER_MODE) | \
+             (DEFAULT_INVERT_ST_ENABLE << BIT_INVERT_ST_ENABLE) | \
+             (DEFAULT_HARD_LIMIT_ENABLE << BIT_HARD_LIMIT_ENABLE) | \
+             (DEFAULT_HOMING_ENABLE << BIT_HOMING_ENABLE) | \
+             (DEFAULT_SOFT_LIMIT_ENABLE << BIT_SOFT_LIMIT_ENABLE) | \
+             (DEFAULT_INVERT_LIMIT_PINS << BIT_INVERT_LIMIT_PINS) | \
+             (DEFAULT_INVERT_PROBE_PIN << BIT_INVERT_PROBE_PIN),
+
+    DEFAULT_HOMING_DIR_MASK,
+    DEFAULT_HOMING_FEED_RATE,
+    DEFAULT_HOMING_SEEK_RATE,
+    DEFAULT_HOMING_DEBOUNCE_DELAY,
+    DEFAULT_HOMING_PULLOFF,
+    
+    
+    };
 
 //将启动行存储到EEPROM中的方法
 void settings_store_startup_line(uint8_t n, char *line)
@@ -105,42 +109,7 @@ void write_global_settings()
 //方法将EEPROM保存的Grbl全局设置恢复为默认值。
 void settings_restore(uint8_t restore_flag) {
   if (restore_flag & SETTINGS_RESTORE_DEFAULTS) {    
-    defaults.pulse_microseconds = DEFAULT_STEP_PULSE_MICROSECONDS;
-    defaults.stepper_idle_lock_time = DEFAULT_STEPPER_IDLE_LOCK_TIME;
-    defaults.step_invert_mask = DEFAULT_STEPPING_INVERT_MASK;
-    defaults.dir_invert_mask = DEFAULT_DIRECTION_INVERT_MASK;
-    defaults.status_report_mask = DEFAULT_STATUS_REPORT_MASK;
-    defaults.junction_deviation = DEFAULT_JUNCTION_DEVIATION;
-    defaults.arc_tolerance = DEFAULT_ARC_TOLERANCE;
-    defaults.rpm_max = DEFAULT_SPINDLE_RPM_MAX;
-    defaults.rpm_min = DEFAULT_SPINDLE_RPM_MIN;
-    defaults.homing_dir_mask = DEFAULT_HOMING_DIR_MASK;
-    defaults.homing_feed_rate = DEFAULT_HOMING_FEED_RATE;
-    defaults.homing_seek_rate = DEFAULT_HOMING_SEEK_RATE;
-    defaults.homing_debounce_delay = DEFAULT_HOMING_DEBOUNCE_DELAY;
-    defaults.homing_pulloff = DEFAULT_HOMING_PULLOFF;
-    defaults.flags = (DEFAULT_REPORT_INCHES << BIT_REPORT_INCHES) | \
-          (DEFAULT_LASER_MODE << BIT_LASER_MODE) | \
-          (DEFAULT_INVERT_ST_ENABLE << BIT_INVERT_ST_ENABLE) | \
-          (DEFAULT_HARD_LIMIT_ENABLE << BIT_HARD_LIMIT_ENABLE) | \
-          (DEFAULT_HOMING_ENABLE << BIT_HOMING_ENABLE) | \
-          (DEFAULT_SOFT_LIMIT_ENABLE << BIT_SOFT_LIMIT_ENABLE) | \
-          (DEFAULT_INVERT_LIMIT_PINS << BIT_INVERT_LIMIT_PINS) | \
-          (DEFAULT_INVERT_PROBE_PIN << BIT_INVERT_PROBE_PIN);
-    defaults.steps_per_mm[X_AXIS] = DEFAULT_X_STEPS_PER_MM;
-    defaults.steps_per_mm[Y_AXIS] = DEFAULT_Y_STEPS_PER_MM;
-    defaults.steps_per_mm[Z_AXIS] = DEFAULT_Z_STEPS_PER_MM;
-    defaults.max_rate[X_AXIS] = DEFAULT_X_MAX_RATE;
-    defaults.max_rate[Y_AXIS] = DEFAULT_Y_MAX_RATE;
-    defaults.max_rate[Z_AXIS] = DEFAULT_Z_MAX_RATE;
-    defaults.acceleration[X_AXIS] = DEFAULT_X_ACCELERATION;
-    defaults.acceleration[Y_AXIS] = DEFAULT_Y_ACCELERATION;
-    defaults.acceleration[Z_AXIS] = DEFAULT_Z_ACCELERATION;
-    defaults.max_travel[X_AXIS] = (-DEFAULT_X_MAX_TRAVEL);
-    defaults.max_travel[Y_AXIS] = (-DEFAULT_Y_MAX_TRAVEL);
-    defaults.max_travel[Z_AXIS] = (-DEFAULT_Z_MAX_TRAVEL);
     settings = defaults;
-
     write_global_settings();
   }
 
