@@ -18,13 +18,13 @@
 #define TX_RING_BUFFER (TX_BUFFER_SIZE+1) // 定义发送缓冲区队列长度
 
 uint8_t serial_rx_buffer[RX_RING_BUFFER]; // 定义串口接收环形队列
-uint8_t serial_rx_buffer_head = 0; // 定义串口接收环形队列头指针
-volatile uint8_t serial_rx_buffer_tail = 0; // 定义串口接收环形队列尾指针
+data uint8_t serial_rx_buffer_head = 0; // 定义串口接收环形队列头指针
+data volatile uint8_t serial_rx_buffer_tail = 0; // 定义串口接收环形队列尾指针
 
 uint8_t serial_tx_buffer[TX_RING_BUFFER]; // 定义串口发送环形队列
-uint8_t serial_tx_buffer_head = 0; // 定义串口发送环形队列头指针
-volatile uint8_t serial_tx_buffer_tail = 0; // 定义串口发送环形队列尾指针
-bool tx_busy;
+data uint8_t serial_tx_buffer_head = 0; // 定义串口发送环形队列头指针
+data volatile uint8_t serial_tx_buffer_tail = 0; // 定义串口发送环形队列尾指针
+bit tx_busy;
 
 
 // 返回串口读缓冲区可用字节数。
@@ -65,7 +65,7 @@ void serial_init()
   T2H = BRT >> 8; //设置定时初始值
   AUXR |= 0x10;		//定时器2开始计时
 	ES = 1;         //使能串口中断
-	tx_busy = 0;
+	tx_busy = false;
 }
 
 
@@ -86,30 +86,26 @@ void serial_write(uint8_t _data) {
   // 储存数据并向前移动头指针
   serial_tx_buffer[serial_tx_buffer_head] = _data;
   serial_tx_buffer_head = next_head;
-
-  // 开启数据寄存器为空的中断，确保串口发送流运行。
-  // 只要环形队列有空间，就可以持续不断地从串口接收数据。
-  // UCSR0B |=  (1 << UDRIE0);
+	// 如果发送队列不为空，启动发送
   if(!tx_busy){
-    TI = 1; // 开启发送
+    TI = 1;
+    tx_busy = true;
   }
 }
 
 char putchar(char c) {
   serial_write(c);
-  return 1;
+  return c;
 }
 
 // 数据寄存器为空的中断处理
-void SERIAL_UDRE()
+void SERIAL_TX_ISR()
 {
 	uint8_t tail;
-  while(tx_busy);;
   
   // 由于环形队列尾指针中断和主程序都会使用，有可能导致数据读取时，指针已经发生了变化，
   // 存在不稳定性，所以要用临时变量暂存，增加读取时的稳定性。
   tail = serial_tx_buffer_tail; // 临时变量暂存 serial_tx_buffer_tail (为volatile优化)
-	tx_busy = 1;
   // 从缓冲区发送一个字节到串口
   SBUF = serial_tx_buffer[tail];
 
@@ -139,7 +135,7 @@ uint8_t serial_read()
 }
 
 // 串口数据接收中断处理
-void SERIAL_RX()
+void SERIAL_RX_ISR()
 {
   uint8_t _data = SBUF; // 从串口数据寄存器取出数据
   uint8_t next_head; // 初始化下一个头指针
@@ -200,17 +196,18 @@ void SERIAL_RX()
 void serial_isr () interrupt 4 {
 	if(TI) {
 		TI = 0;
-		tx_busy = 0;
     // 环形队列不为空就处理
     if(serial_tx_buffer_tail != serial_tx_buffer_head) { 
-      SERIAL_UDRE();
+      SERIAL_TX_ISR();
+    } else {
+      tx_busy = false;
     }
     
 	}
 
 	if(RI) {
 		RI = 0;
-		SERIAL_RX();
+		SERIAL_RX_ISR();
 	}
 }
 

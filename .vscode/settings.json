@@ -7,6 +7,8 @@
         "PUTCHAR.C": "cpp",
         "grbl.h": "c",
         "eeprom.h": "c",
-        "stc8h.h": "c"
+        "stc8h.h": "c",
+        "STC8H.H": "cpp",
+        "intrins.h": "c"
     }
 }

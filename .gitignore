@@ -1,4 +1,5 @@
 Objects/
 Listings/
+build
 *.log
 *.lock

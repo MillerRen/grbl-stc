@@ -98,7 +98,6 @@ void protocol_main_loop()
           // 解析并执行G代码块。
           report_status_message(gc_execute_line(line));
         }
-
         // 为下一行重置跟踪数据变量
         line_flags = 0;
         char_counter = 0;

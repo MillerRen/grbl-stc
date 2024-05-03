@@ -75,7 +75,7 @@ void settings_store_startup_line(uint8_t n, char *line)
 //注意：此函数只能在空闲状态下调用。
 void settings_store_build_info(char *line)
 {
-  // printf("write buildinfo\n");
+  printf("write buildinfo\n");
   eeprom_erase(EEPROM_ADDR_BUILD_INFO);
   //生成信息只能在状态为空闲时存储。
   memcpy_to_eeprom_with_checksum(EEPROM_ADDR_BUILD_INFO,(char*)line, LINE_BUFFER_SIZE);
@@ -117,10 +117,12 @@ void settings_restore(uint8_t restore_flag) {
     uint8_t idx;
     float coord_data[N_AXIS];
     memset(&coord_data, 0, sizeof(coord_data));
+    eeprom_erase(EEPROM_ADDR_PARAMETERS);
     for (idx=0; idx <= SETTING_INDEX_NCOORD; idx++) { settings_write_coord_data(idx, coord_data); }
   }
 
   if (restore_flag & SETTINGS_RESTORE_STARTUP_LINES) {
+    eeprom_erase(EEPROM_ADDR_STARTUP_BLOCK);
     #if N_STARTUP_LINE > 0
       eeprom_put_char(EEPROM_ADDR_STARTUP_BLOCK, 0);
       eeprom_put_char(EEPROM_ADDR_STARTUP_BLOCK+1, 0); // Checksum
@@ -132,6 +134,7 @@ void settings_restore(uint8_t restore_flag) {
   }
 
   if (restore_flag & SETTINGS_RESTORE_BUILD_INFO) {
+    eeprom_erase(EEPROM_ADDR_BUILD_INFO);
     eeprom_put_char(EEPROM_ADDR_BUILD_INFO , 0);
     eeprom_put_char(EEPROM_ADDR_BUILD_INFO+1 , 0); //校验和
   }
@@ -161,6 +164,7 @@ uint8_t settings_read_build_info(char *line)
   if (!(memcpy_from_eeprom_with_checksum((char*)line, EEPROM_ADDR_BUILD_INFO, LINE_BUFFER_SIZE))) {
     //使用默认值重置行
     line[0] = 0; //空行
+    printf("read buildinfo fail\n");
     settings_store_build_info(line);
     return(false);
   }
@@ -176,7 +180,7 @@ uint8_t settings_read_coord_data(uint8_t coord_select, float *coord_data)
   if (!(memcpy_from_eeprom_with_checksum((char*)coord_data, addr, sizeof(float)*N_AXIS))) {
     //使用默认零向量重置
     clear_vector_float(coord_data);
-    // printf("read coorddata fail\n");
+    printf("read coorddata fail\n");
     // printf("write coorddata\n");
     settings_write_coord_data(coord_select,coord_data);
     return(false);

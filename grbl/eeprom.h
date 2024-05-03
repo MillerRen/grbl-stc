@@ -17,17 +17,13 @@
 
 #include "grbl.h"
 
-//sfr IAP_CMD   = 0xC5;
 #define		IAP_STANDBY()	IAP_CMD = 0		//IAP空闲命令（禁止）
 #define		IAP_READ()		IAP_CMD = 1		//IAP读出命令
 #define		IAP_WRITE()		IAP_CMD = 2		//IAP写入命令
 #define		IAP_ERASE()		IAP_CMD = 3		//IAP擦除命令
 
-//sfr IAP_TRIG  = 0xC6;
-#define 	IAP_TRIG()	IAP_TRIG = 0x5A,	IAP_TRIG = 0xA5		/* IAP触发命令 */
+#define 	IAP_TRIG()	F0 = EA, EA = 0, IAP_TRIG = 0x5A, IAP_TRIG = 0xA5, EA = F0		/* IAP触发命令 */
 
-//							            7    6    5      4    3   2  1   0   Reset Value
-//sfr IAP_CONTR = 0xC7;		IAPEN SWBS SWRST CFAIL  -   -  -   -   0000,x000	//IAP Control Register
 #define IAP_EN          (1<<7)
 #define IAP_SWBS        (1<<6)
 #define IAP_SWRST       (1<<5)

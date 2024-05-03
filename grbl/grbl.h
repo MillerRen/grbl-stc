@@ -32,8 +32,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <stddef.H>
-#include <intrins.H>
+#include <stddef.h>
+#include <intrins.h>
 
 #include "compat.h"
 
