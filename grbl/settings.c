@@ -75,7 +75,7 @@ void settings_store_startup_line(uint8_t n, char *line)
 //注意：此函数只能在空闲状态下调用。
 void settings_store_build_info(char *line)
 {
-  printf("write buildinfo\n");
+  //printf("write buildinfo\n");
   eeprom_erase(EEPROM_ADDR_BUILD_INFO);
   //生成信息只能在状态为空闲时存储。
   memcpy_to_eeprom_with_checksum(EEPROM_ADDR_BUILD_INFO,(char*)line, LINE_BUFFER_SIZE);
@@ -164,7 +164,7 @@ uint8_t settings_read_build_info(char *line)
   if (!(memcpy_from_eeprom_with_checksum((char*)line, EEPROM_ADDR_BUILD_INFO, LINE_BUFFER_SIZE))) {
     //使用默认值重置行
     line[0] = 0; //空行
-    printf("read buildinfo fail\n");
+    //printf("read buildinfo fail\n");
     settings_store_build_info(line);
     return(false);
   }

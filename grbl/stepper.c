@@ -14,6 +14,7 @@
 
 #include "grbl.h"
 
+#define TIMER0_PERIOD (F_CPU/1/1000000L) // 1微秒@24M 1T mode
 
 //一些有用的常数。
 #define DT_SEGMENT (1.0/(ACCELERATION_TICKS_PER_SECOND*60.0)) // 分钟/段
@@ -221,12 +222,13 @@ void st_wake_up()
 //    OCR0A = -(((settings.pulse_microseconds)*TICKS_PER_MICROSECOND) >> 3);
   #else // Normal operation
     // 设置步进脉冲时间。 从振荡器进行特别计算。 减去2可能是为了防止PWM100%会一直输出高电平。
-    // 这里右移3位相当于除以8，是因为定时器0时钟从振荡器8分频获得。
-//    st.step_pulse_time = -(((settings.pulse_microseconds-2)*TICKS_PER_MICROSECOND) >> 3);
+    // 这里不需要右移3位，是因为定时器0时钟从振荡器获得。
+    st.step_pulse_time = -(((settings.pulse_microseconds-2)*TICKS_PER_MICROSECOND));
   #endif
 
   //启用步进驱动程序中断,启用后会很快进入中断
-//  TIMSK1 |= (1<<OCIE1A);
+  ET1 = 1;
+
 }
 
 
@@ -235,8 +237,8 @@ void st_go_idle()
 {
 	bool pin_state = false; //保持启用状态。
   //禁用步进驱动程序中断。如果激活，允许步进器端口重置中断完成。
-//  TIMSK1 &= ~(1<<OCIE1A); //禁用定时器1中断
-//  TCCR1B = (TCCR1B & ~((1<<CS12) | (1<<CS11))) | (1<<CS10); //将时钟重置为无预分频(CS12=0 CS11=0 CS10=1分频系数为1)。
+  ET1 = 0; //禁用定时器1中断
+   //将时钟重置为无预分频。
   busy = false;
 
   //根据设置和环境，设置步进驱动程序空闲状态、禁用或启用。
@@ -247,8 +249,8 @@ void st_go_idle()
     pin_state = true; // 覆盖， 禁用步进器。
   }
   if (bit_istrue(settings.flags,BITFLAG_INVERT_ST_ENABLE)) { pin_state = !pin_state; } //应用引脚反转。
-  // if (pin_state) { STEPPERS_DISABLE_PORT |= (1<<STEPPERS_DISABLE_BIT); }
-  // else { STEPPERS_DISABLE_PORT &= ~(1<<STEPPERS_DISABLE_BIT); }
+  if (pin_state) { STEPPERS_DISABLE_PORT |= (1<<STEPPERS_DISABLE_BIT); }
+  else { STEPPERS_DISABLE_PORT &= ~(1<<STEPPERS_DISABLE_BIT); }
 }
 
 
@@ -282,12 +284,12 @@ void st_go_idle()
 // TODO:以某种方式替换ISR中int32位置计数器的直接更新。 
 //可能使用较小的int8变量，并仅在段完成时更新位置计数器。
 //由于探测和寻的周期需要真正的实时位置，这可能会变得复杂。
-void TIMER1_COMPA_vect() // CTC和COMPA中断可以产生精确的定时
+void TIMER1_COMPA_vect() interrupt TMR1_VECTOR // CTC和COMPA中断可以产生精确的定时
 {
   if (busy) { return; } //忙标志用于避免重新进入该中断
 
   //在我们步进步进器之前，将方向引脚设置几纳秒
-  // DIRECTION_PORT = (DIRECTION_PORT & ~DIRECTION_MASK) | (st.dir_outbits & DIRECTION_MASK);
+  DIRECTION_PORT = (DIRECTION_PORT & ~DIRECTION_MASK) | (st.dir_outbits & DIRECTION_MASK);
   #ifdef ENABLE_DUAL_AXIS
     DIRECTION_PORT_DUAL = (DIRECTION_PORT_DUAL & ~DIRECTION_MASK_DUAL) | (st.dir_outbits_dual & DIRECTION_MASK_DUAL);
   #endif
@@ -306,8 +308,9 @@ void TIMER1_COMPA_vect() // CTC和COMPA中断可以产生精确的定时
   #endif
 
   //启用步进脉冲重置定时器0，以便步进器端口重置中断能够在准确settings.pulse.microseconds微秒后重置信号，与主定时器1预分频器无关。
-//  TCNT0 = st.step_pulse_time; //重新加载计时器0计数器
-//  TCCR0B = (1<<CS01); //开始计时0。全速，1/8预分频器
+  TL0 = 255 - st.step_pulse_time; //重新加载计时器0计数器, 向下计数
+  TH0 = 0xFF;
+  ET0 = 1; //开始计时0。全速
 
   busy = true;
   sei(); //重新启用中断，以允许步进器端口重置中断按时触发。
@@ -447,14 +450,14 @@ void TIMER1_COMPA_vect() // CTC和COMPA中断可以产生精确的定时
 */
 //当ISR_TIMER1_COMPAREA设置电机端口位以执行一个步骤时，该中断由ISR_TIMER1_COMPAREA启用。
 //此ISR在短时间（settings.pulse_microseconds）完成一步循环后重置电机端口。
-void TIMER0_OVF_vect()
+void TIMER0_OVF_vect() interrupt TMR0_VECTOR
 {
   //重置步进引脚（保留方向引脚）
-  // STEP_PORT = (STEP_PORT & ~STEP_MASK) | (step_port_invert_mask & STEP_MASK);
+  STEP_PORT = (STEP_PORT & ~STEP_MASK) | (step_port_invert_mask & STEP_MASK);
   #ifdef ENABLE_DUAL_AXIS
     STEP_PORT_DUAL = (STEP_PORT_DUAL & ~STEP_MASK_DUAL) | (step_port_invert_mask_dual & STEP_MASK_DUAL);
   #endif
-  //TCCR0B = 0; //禁用定时器0以防止在不需要时重新进入此中断。
+  ET0 = 0; //禁用定时器0以防止在不需要时重新进入此中断。
 }
 #ifdef STEP_PULSE_DELAY
   //此中断仅在启用步进脉冲延迟时使用。这里，在经过阶跃脉冲延迟时间段之后启动阶跃脉冲。ISR TIMER2_OVF中断将在适当pulse_microseconds后触发，如在正常操作中。
@@ -524,24 +527,28 @@ void st_reset()
 void stepper_init()
 {
   //配置步进和方向接口引脚
-  // STEP_DDR |= STEP_MASK;
-  // STEPPERS_DISABLE_DDR |= 1<<STEPPERS_DISABLE_BIT;
-  // DIRECTION_DDR |= DIRECTION_MASK;
+  STEP_DDR |= STEP_MASK;
+  STEPPERS_DISABLE_DDR |= 1<<STEPPERS_DISABLE_BIT;
+  DIRECTION_DDR |= DIRECTION_MASK;
   
   #ifdef ENABLE_DUAL_AXIS
     STEP_DDR_DUAL |= STEP_MASK_DUAL;
     DIRECTION_DDR_DUAL |= DIRECTION_MASK_DUAL;
   #endif
 
-  //配置定时器1：步进驱动程序中断 WGM13=0 WGM12=1 WGM11=0 WGM10=0
-//  TCCR1B &= ~(1<<WGM13); // waveform generation = 0100 = CTC
-//  TCCR1B |=  (1<<WGM12);
-//  TCCR1A &= ~((1<<WGM11) | (1<<WGM10));
-//  TCCR1A &= ~((1<<COM1A1) | (1<<COM1A0) | (1<<COM1B1) | (1<<COM1B0)); // 断开OC1输出
-  // TCCR1B = (TCCR1B & ~((1<<CS12) | (1<<CS11))) | (1<<CS10); // 在st_go_idle（）中设置。
-  // TIMSK1 &= ~(1<<OCIE1A);  // 在st_go_idle（）中设置。
+  //配置定时器1：步进驱动程序中断
+  AUXR |= 0x40;			//定时器时钟1T模式
+	TMOD &= 0x0F;			//设置定时器模式 16位自动重载
+  TF1   = 0;        //清除TF1标志
+  TR1   = 1;        //定时器1开始计时
 
   //配置计时器0：步进器端口重置中断
+  AUXR |= 0x80;			//定时器时钟1T模式
+	TMOD &= 0xF0;			//设置定时器模式
+	TMOD |= 0x01;			//设置定时器模式 16位不自动重载
+  TF0 = 0;				  //清除TF0标志
+	TR0 = 1;				  //定时器0开始计时
+
 //  TIMSK0 &= ~((1<<OCIE0B) | (1<<OCIE0A) | (1<<TOIE0)); //断开OC0输出和OVF中断。
 //  TCCR0A = 0; //正常运行
 //  TCCR0B = 0; //在需要时禁用计时器0

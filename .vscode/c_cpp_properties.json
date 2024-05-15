@@ -5,8 +5,7 @@
             "includePath": [
                 "d:\\STC\\grbl_stc8h8k64u\\grbl",
                 "d:\\STC\\grbl_stc8h8k64u\\lib",
-                "C:\\Keil_v5\\C51\\INC",
-                "C:/Keil_v5/C51/INC/STC"
+                "C:\\Keil_v5\\C51\\INC"
             ],
             "defines": [
                 "__C51__",
