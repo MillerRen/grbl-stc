@@ -36,6 +36,7 @@
 #include <intrins.h>
 #include "stdint.h"
 #include "stdbool.h"
+#include "mathext.h"
 
 
 #include "compat.h"
