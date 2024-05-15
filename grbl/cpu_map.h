@@ -18,6 +18,11 @@
 #ifndef cpu_map_h
 #define cpu_map_h
 
+#define sei() EA = 1
+#define cli() EA = 0
+
+#define PSTR(s) (const char*)s
+
 #define F_CPU 24000000L
 
 #ifdef CPU_MAP_ATMEGA328P//（Arduino Uno）由Grbl正式支持。

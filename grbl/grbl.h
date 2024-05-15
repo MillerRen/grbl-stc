@@ -38,9 +38,6 @@
 #include "stdbool.h"
 #include "mathext.h"
 
-
-#include "compat.h"
-
 // Define the Grbl system include files. NOTE: Do not alter organization.
 #include "config.h"
 #include "nuts_bolts.h"

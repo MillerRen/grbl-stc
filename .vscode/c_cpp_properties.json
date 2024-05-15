@@ -5,7 +5,8 @@
             "includePath": [
                 "d:\\STC\\grbl_stc8h8k64u\\grbl",
                 "d:\\STC\\grbl_stc8h8k64u\\lib",
-                "C:\\Keil_v5\\C51\\INC"
+                "C:\\Keil_v5\\C51\\INC",
+                "C:/Keil_v5/C51/INC/STC"
             ],
             "defines": [
                 "__C51__",
@@ -31,7 +32,8 @@
                 "_priority_=",
                 "_task_="
             ],
-            "intelliSenseMode": "${default}"
+            "intelliSenseMode": "${default}",
+            "cStandard": "c89"
         }
     ],
     "version": 4
