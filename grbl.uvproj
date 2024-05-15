@@ -311,7 +311,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\grbl</IncludePath>
+              <IncludePath>.\grbl;.\lib</IncludePath>
             </VariousControls>
           </C51>
           <Ax51>
@@ -398,7 +398,7 @@
                   <MiscControls></MiscControls>
                   <Define></Define>
                   <Undefine></Undefine>
-                  <IncludePath>.\grbl;.\User</IncludePath>
+                  <IncludePath>.\grbl;.\lib</IncludePath>
                 </VariousControls>
               </C51>
               <Ax51>
