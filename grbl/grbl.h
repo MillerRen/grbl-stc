@@ -34,6 +34,8 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <intrins.h>
+#include "stdint.h"
+
 
 #include "compat.h"
 
