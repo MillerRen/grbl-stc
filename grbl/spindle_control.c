@@ -23,19 +23,33 @@
 void spindle_init()
 {
   
+  #ifdef VARIABLE_SPINDLE
     // PWMA_PS = 0x01;                          //引脚切换p2.0输出,默认p1.0
     PWMA_PSCR = 23;                             //预分频为1MHz
     PWMA_CCER1 = 0x00;                          //写CCMRx前必须先清零CCERx关闭通道
     PWMA_CCMR1 = 0x60;                          //设置CC1为PWMA输出模式
     PWMA_CCER1 = 0x01;                          //使能CC1通道
-    PWMA_CCR1 = 0;                              //设置占空比时间
-    PWMA_ARR = 999;                             //设置周期时间，频率为1K
-    PWMA_ENO = 0x01;                            //使能PWM1P端口输出
-    PWMA_BKR = 0x80;                            //使能主输出
-    PWMA_CR1 = 0x01;                            //开始计时
-	
+    PWMA_CCR1  = 0;                             //设置占空比时间
+    PWMA_ARR   = 999;                           //设置周期时间，频率为1K
+    // PWMA_ENO  |= (1<<SPINDLE_PWM_BIT);          //使能PWMP端口输出
+    PWMA_BKR   = 0x80;                          //使能主输出
+    PWMA_CR1  |= 0x01;                          //开始计时
+    //如果需要，配置可变主轴PWM和启用引脚。
+    //在Uno上，PWM和enable是共用的，除非另有配置。
+    #ifdef USE_SPINDLE_DIR_AS_ENABLE_PIN
+      SPINDLE_ENABLE_DDR |= (1<<SPINDLE_ENABLE_BIT); //配置为输出引脚。
+    #else
+      #ifndef ENABLE_DUAL_AXIS
+        SPINDLE_DIRECTION_DDR |= (1<<SPINDLE_DIRECTION_BIT); //配置为输出引脚。
+      #endif
+    #endif
     pwm_gradient = SPINDLE_PWM_RANGE/(settings.rpm_max-settings.rpm_min);
-  
+  #else
+    SPINDLE_ENABLE_DDR |= (1<<SPINDLE_ENABLE_BIT); //配置为输出引脚。
+    #ifndef ENABLE_DUAL_AXIS
+      SPINDLE_DIRECTION_DDR |= (1<<SPINDLE_DIRECTION_BIT); //配置为输出引脚。
+    #endif
+  #endif
 
   spindle_stop();
 }
@@ -84,19 +98,50 @@ uint8_t spindle_get_state()
 //由主轴_init（）、主轴_set_speed（）、主轴_set_state（）和mc_reset（）调用。
 void spindle_stop()
 {
-    PWMA_CCR1H = 0;                              //设置占空比时间
-    PWMA_CCR1L = 0;                              //设置占空比时间
-
+    
+  #ifdef VARIABLE_SPINDLE
+    PWMA_ENO &= ~(1<<SPINDLE_PWM_BIT); //禁用PWM。输出电压为零。
+    #ifdef USE_SPINDLE_DIR_AS_ENABLE_PIN
+      #ifdef INVERT_SPINDLE_ENABLE_PIN
+        SPINDLE_ENABLE_PORT |= (1<<SPINDLE_ENABLE_BIT);  //将引脚设置为高
+      #else
+        SPINDLE_ENABLE_PORT &= ~(1<<SPINDLE_ENABLE_BIT); //将引脚设置为低
+      #endif
+    #endif
+  #else
+    #ifdef INVERT_SPINDLE_ENABLE_PIN
+      SPINDLE_ENABLE_PORT |= (1<<SPINDLE_ENABLE_BIT);  //将引脚设置为高
+    #else
+      SPINDLE_ENABLE_PORT &= ~(1<<SPINDLE_ENABLE_BIT); // Set pin to low
+    #endif
+  #endif
 }
 
 
 #ifdef VARIABLE_SPINDLE
   //设置主轴速度PWM输出和启用引脚（如果配置）。由spindle_set_state（）和步进ISR调用。保持小规模和高效率的运行。
   void spindle_set_speed(uint16_t pwm_value)
-  {printf("%u", pwm_value);
+  {//printf("pwm:%u", pwm_value);
        PWMA_CCR1H = pwm_value >> 8; //设置PWM输出电平。
        PWMA_CCR1L = pwm_value; //设置PWM输出电平。
-       
+    #ifdef SPINDLE_ENABLE_OFF_WITH_ZERO_SPEED
+      if (pwm_value == SPINDLE_PWM_OFF_VALUE) {
+        spindle_stop();
+      } else {
+        SPINDLE_TCCRA_REGISTER |= (1<<SPINDLE_COMB_BIT); //确保PWM输出已启用。
+        #ifdef INVERT_SPINDLE_ENABLE_PIN
+          SPINDLE_ENABLE_PORT &= ~(1<<SPINDLE_ENABLE_BIT);
+        #else
+          SPINDLE_ENABLE_PORT |= (1<<SPINDLE_ENABLE_BIT);
+        #endif
+      }
+    #else
+      if (pwm_value == SPINDLE_PWM_OFF_VALUE) {
+        PWMA_ENO &= ~(1<<SPINDLE_PWM_BIT); //禁用PWM。输出电压为零。
+      } else {
+        PWMA_ENO |= (1<<SPINDLE_PWM_BIT); //确保PWM输出已启用。
+      }
+    #endif 
   }
 
 
@@ -196,9 +241,9 @@ void spindle_stop()
     
     #if !defined(USE_SPINDLE_DIR_AS_ENABLE_PIN) && !defined(ENABLE_DUAL_AXIS)
       if (state == SPINDLE_ENABLE_CW) {
-        // SPINDLE_DIRECTION_PORT &= ~(1<<SPINDLE_DIRECTION_BIT);
+        SPINDLE_DIRECTION_PORT &= ~(1<<SPINDLE_DIRECTION_BIT);
       } else {
-        // SPINDLE_DIRECTION_PORT |= (1<<SPINDLE_DIRECTION_BIT);
+        SPINDLE_DIRECTION_PORT |= (1<<SPINDLE_DIRECTION_BIT);
       }
     #endif
   
