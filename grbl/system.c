@@ -17,14 +17,14 @@
 
 void system_init()
 {
-  //CONTROL_DDR &= ~(CONTROL_MASK); //配置为输入引脚
-  #ifdef DISABLE_CONTROL_PIN_PULL_UP
-    //CONTROL_PORT &= ~(CONTROL_MASK); //正常低电压运行。需要外部下拉。
-  #else
-    //CONTROL_PORT |= CONTROL_MASK;   //启用内部上拉电阻器。正常高位运行。
+  CONTROL_DDR &= ~(CONTROL_MASK); //配置为输入引脚
+  CONTROL_DDR_1 &= ~(CONTROL_MASK); //配置为输入引脚
+  #ifdef ENABLE_CONTROL_PIN_PULL_UP
+    CONTROL_PORT |= CONTROL_MASK;   //启用内部上拉电阻器。正常高位运行。
   #endif
-  //CONTROL_PCMSK |= CONTROL_MASK;  //启用管脚更改中断的特定管脚
-  //PCICR |= (1 << CONTROL_INT);   //启用引脚更改中断
+  CONTROL_PCMSK   |= CONTROL_MASK;  //启用管脚更改中断的特定管脚
+  CONTROL_PCMSK_1 |= CONTROL_MASK;  //启用管脚更改中断的特定管脚
+  CONTROL_INT     |= CONTROL_MASK;  //启用引脚更改中断
 }
 
 
@@ -33,19 +33,19 @@ void system_init()
 uint8_t system_control_get_state()
 {
   uint8_t control_state = 0;
-  // uint8_t pin = (CONTROL_PIN & CONTROL_MASK) ^ CONTROL_MASK;
-  // #ifdef INVERT_CONTROL_PIN_MASK
-  //   pin ^= INVERT_CONTROL_PIN_MASK;
-  // #endif
-  // if (pin) {
-  //   #ifdef ENABLE_SAFETY_DOOR_INPUT_PIN
-  //     if (bit_istrue(pin,(1<<CONTROL_SAFETY_DOOR_BIT))) { control_state |= CONTROL_PIN_INDEX_SAFETY_DOOR; }
-  //   #else
-  //     if (bit_istrue(pin,(1<<CONTROL_FEED_HOLD_BIT))) { control_state |= CONTROL_PIN_INDEX_FEED_HOLD; }
-  //   #endif
-  //   if (bit_istrue(pin,(1<<CONTROL_RESET_BIT))) { control_state |= CONTROL_PIN_INDEX_RESET; }
-  //   if (bit_istrue(pin,(1<<CONTROL_CYCLE_START_BIT))) { control_state |= CONTROL_PIN_INDEX_CYCLE_START; }
-  // }
+  uint8_t pin = (CONTROL_PIN & CONTROL_MASK) ^ CONTROL_MASK;
+  #ifdef INVERT_CONTROL_PIN_MASK
+    pin ^= INVERT_CONTROL_PIN_MASK;
+  #endif
+  if (pin) {
+    #ifdef ENABLE_SAFETY_DOOR_INPUT_PIN
+      if (bit_istrue(pin,(1<<CONTROL_SAFETY_DOOR_BIT))) { control_state |= CONTROL_PIN_INDEX_SAFETY_DOOR; }
+    #else
+      if (bit_istrue(pin,(1<<CONTROL_FEED_HOLD_BIT))) { control_state |= CONTROL_PIN_INDEX_FEED_HOLD; }
+    #endif
+    if (bit_istrue(pin,(1<<CONTROL_RESET_BIT))) { control_state |= CONTROL_PIN_INDEX_RESET; }
+    if (bit_istrue(pin,(1<<CONTROL_CYCLE_START_BIT))) { control_state |= CONTROL_PIN_INDEX_CYCLE_START; }
+  }
   return(control_state);
 }
 
@@ -53,9 +53,10 @@ uint8_t system_control_get_state()
 //引脚输出命令的引脚更改中断，即循环启动、进给保持和复位。
 // 仅设置实时执行命令变量，以便主程序在就绪时执行这些命令。
 // 这与直接从传入串行数据流中拾取的基于字符的实时命令完全相同。
-void CONTROL_INT_vect()
+void CONTROL_INT_vect_ISR() interrupt CONTROL_INT_vect
 {
   uint8_t pin = system_control_get_state();
+  CONTROL_INTF &= ~pin;
   if (pin) {
     if (bit_istrue(pin,CONTROL_PIN_INDEX_RESET)) {
       mc_reset();

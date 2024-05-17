@@ -268,7 +268,7 @@
 //警告：当上拉被禁用时，这需要使用下拉电阻器进行额外接线！
 #define ENABLE_LIMIT_PIN_PULL_UP
 //#define DISABLE_PROBE_PIN_PULL_UP
-//#define DISABLE_CONTROL_PIN_PULL_UP
+#define ENABLE_CONTROL_PIN_PULL_UP
 
 //设置应用刀具长度偏移的轴。假设主轴始终与选定轴平行，刀具朝向负方向。换句话说，从当前位置减去正的刀具长度偏移值。
 #define TOOL_LENGTH_OFFSET_AXIS Z_AXIS//默认z轴。有效值为X_轴、Y_轴或Z_轴。
