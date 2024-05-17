@@ -92,7 +92,8 @@
 
 // 定义探针开关输入引脚。
 #define PROBE_DDR P0M0
-#define PROBE_PIN P0INTF
+#define PROBE_DDR_1 P0M1
+#define PROBE_PIN P0
 #define PROBE_PORT P0
 #define PROBE_BIT 5 // Uno模拟引脚5
 #define PROBE_MASK (1 << PROBE_BIT)
