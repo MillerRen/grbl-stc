@@ -70,18 +70,18 @@ void print_uint8_base10(uint8_t n)
 }
 
 //以所需位数打印基数2中的uint8变量。
-void print_uint8_base2_ndigit(uint8_t n, uint8_t digits) {
-  unsigned char buf[digits];
-  uint8_t i = 0;
+// void print_uint8_base2_ndigit(uint8_t n, uint8_t digits) {
+//   unsigned char buf[digits];
+//   uint8_t i = 0;
 
-  for (; i < digits; i++) {
-      buf[i] = n % 2 ;
-      n /= 2;
-  }
+//   for (; i < digits; i++) {
+//       buf[i] = n % 2 ;
+//       n /= 2;
+//   }
 
-  for (; i > 0; i--)
-      serial_write('0' + buf[i - 1]);
-}
+//   for (; i > 0; i--)
+//       serial_write('0' + buf[i - 1]);
+// }
 
 
 void print_uint32_base10(uint32_t n)
