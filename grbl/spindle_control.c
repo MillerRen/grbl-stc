@@ -66,14 +66,14 @@ uint8_t spindle_get_state()
         if (bit_istrue(SPINDLE_ENABLE_PORT,(1<<SPINDLE_ENABLE_BIT))) { return(SPINDLE_STATE_CW); }
       #endif
     #else
-      //if (SPINDLE_TCCRA_REGISTER & (1<<SPINDLE_COMB_BIT)) { //检查PWM是否启用。
-        //#ifdef ENABLE_DUAL_AXIS
-          //return(SPINDLE_STATE_CW);
-        //#else
-          //if (SPINDLE_DIRECTION_PORT & (1<<SPINDLE_DIRECTION_BIT)) { return(SPINDLE_STATE_CCW); }
-          //else { return(SPINDLE_STATE_CW); }
-        //#endif
-      //}
+      if (PWMA_ENO & (1<<SPINDLE_PWM_BIT)) { //检查PWM是否启用。
+        #ifdef ENABLE_DUAL_AXIS
+          return(SPINDLE_STATE_CW);
+        #else
+          if (SPINDLE_DIRECTION_PORT & (1<<SPINDLE_DIRECTION_BIT)) { return(SPINDLE_STATE_CCW); }
+          else { return(SPINDLE_STATE_CW); }
+        #endif
+      }
     #endif
   #else
     #ifdef INVERT_SPINDLE_ENABLE_PIN
@@ -89,7 +89,7 @@ uint8_t spindle_get_state()
       #endif
     }
   #endif
-  return(SPINDLE_STATE_CW);
+  return(SPINDLE_STATE_DISABLE);
 }
 
 
@@ -121,7 +121,7 @@ void spindle_stop()
 #ifdef VARIABLE_SPINDLE
   //设置主轴速度PWM输出和启用引脚（如果配置）。由spindle_set_state（）和步进ISR调用。保持小规模和高效率的运行。
   void spindle_set_speed(uint16_t pwm_value)
-  {//printf("pwm:%u", pwm_value);
+  {
        PWMA_CCR1H = pwm_value >> 8; //设置PWM输出电平。
        PWMA_CCR1L = pwm_value; //设置PWM输出电平。
     #ifdef SPINDLE_ENABLE_OFF_WITH_ZERO_SPEED

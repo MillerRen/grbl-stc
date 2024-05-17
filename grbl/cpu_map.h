@@ -106,17 +106,7 @@
 // 定义主轴启用和主轴方向输出引脚。
 #define SPINDLE_ENABLE_DDR P1M0
 #define SPINDLE_ENABLE_PORT P1
-// Z限制引脚和主轴PWM/启用引脚交换以访问引脚11上的硬件PWM。
-#ifdef VARIABLE_SPINDLE
-#ifdef USE_SPINDLE_DIR_AS_ENABLE_PIN
-// 如果启用，主轴方向引脚现在用作主轴启用，而PWM保持在D11上。
-#define SPINDLE_ENABLE_BIT 5 // Uno数字引脚13（注：由于LED，D13不能上拉输入。）
-#else
 #define SPINDLE_ENABLE_BIT 2 // Uno数字管脚11
-#endif
-#else
-#define SPINDLE_ENABLE_BIT 4 // Uno数字管脚12
-#endif
 #ifndef USE_SPINDLE_DIR_AS_ENABLE_PIN
 #define SPINDLE_DIRECTION_DDR P1M0
 #define SPINDLE_DIRECTION_PORT P1
