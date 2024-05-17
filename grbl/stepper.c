@@ -574,8 +574,8 @@ void st_reset()
   st.dir_outbits = dir_port_invert_mask; // 将方向位初始化为默认值。
 
   // 初始化步进和方向端口引脚。
-  //  STEP_PORT = (STEP_PORT & ~STEP_MASK) | step_port_invert_mask;
-  //  DIRECTION_PORT = (DIRECTION_PORT & ~DIRECTION_MASK) | dir_port_invert_mask;
+   STEP_PORT = (STEP_PORT & ~STEP_MASK) | step_port_invert_mask;
+   DIRECTION_PORT = (DIRECTION_PORT & ~DIRECTION_MASK) | dir_port_invert_mask;
 
 #ifdef ENABLE_DUAL_AXIS
   st.dir_outbits_dual = dir_port_invert_mask_dual;
@@ -588,11 +588,14 @@ void st_reset()
 void stepper_init()
 {
   // 配置步进和方向接口引脚
-  // STEP_DDR &= ~STEP_MASK; // 默认为高阻输入,重置PxM1状态后切换为双向口
-  P4M0 = 0x00;
-  P4M1 = 0x00;
-  // STEPPERS_DISABLE_DDR &= ~(1<<STEPPERS_DISABLE_BIT);
-  // DIRECTION_DDR &= ~DIRECTION_MASK; // 默认为高阻输入,重置PxM1状态后切换为双向口
+  STEP_DDR |= STEP_MASK; // 默认为高阻输入,重置PxM1状态后切换为双向口
+  STEP_DDR_1 &= ~STEP_MASK; // 默认为高阻输入,重置PxM1状态后切换为双向口
+  // P4M0 = 0x00;
+  // P4M1 = 0x00;
+  STEPPERS_DISABLE_DDR |= (1<<STEPPERS_DISABLE_BIT);
+  STEPPERS_DISABLE_DDR_1 &= ~(1<<STEPPERS_DISABLE_BIT);
+  DIRECTION_DDR |= DIRECTION_MASK; // 默认为高阻输入,重置PxM1状态后切换为双向口
+  DIRECTION_DDR_1 &= ~DIRECTION_MASK; // 默认为高阻输入,重置PxM1状态后切换为双向口
 
 #ifdef ENABLE_DUAL_AXIS
   STEP_DDR_DUAL |= STEP_MASK_DUAL;

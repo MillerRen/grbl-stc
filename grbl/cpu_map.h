@@ -32,6 +32,7 @@
 
 // 定义步进脉冲输出引脚。注意：所有步进位引脚必须位于同一端口上。
 #define STEP_DDR P4M0
+#define STEP_DDR_1 P4M1
 #define STEP_PORT P4
 #define X_STEP_BIT 2                                                          // Uno数字引脚2
 #define Y_STEP_BIT 3                                                          // Uno数字管脚3
@@ -39,16 +40,18 @@
 #define STEP_MASK ((1 << X_STEP_BIT) | (1 << Y_STEP_BIT) | (1 << Z_STEP_BIT)) // 所有步进位
 
 // 定义步进方向输出引脚。注意：所有方向引脚必须位于同一端口上。
-#define DIRECTION_DDR P4M0
-#define DIRECTION_PORT P4
-#define X_DIRECTION_BIT 5                                                                         // Uno数字管脚5
-#define Y_DIRECTION_BIT 6                                                                         // Uno数字管脚6
-#define Z_DIRECTION_BIT 7                                                                         // Uno数字引脚7
+#define DIRECTION_DDR P2M0
+#define DIRECTION_DDR_1 P2M1
+#define DIRECTION_PORT P2
+#define X_DIRECTION_BIT 1                                                                         // Uno数字管脚5
+#define Y_DIRECTION_BIT 2                                                                         // Uno数字管脚6
+#define Z_DIRECTION_BIT 3                                                                         // Uno数字引脚7
 #define DIRECTION_MASK ((1 << X_DIRECTION_BIT) | (1 << Y_DIRECTION_BIT) | (1 << Z_DIRECTION_BIT)) // 所有方向位
 
 // 定义步进驱动器启用/禁用输出引脚。
-#define STEPPERS_DISABLE_DDR P4M0
-#define STEPPERS_DISABLE_PORT P4
+#define STEPPERS_DISABLE_DDR P5M0
+#define STEPPERS_DISABLE_DDR_1 P5M1
+#define STEPPERS_DISABLE_PORT P5
 #define STEPPERS_DISABLE_BIT 0 // 一个数字管脚8
 #define STEPPERS_DISABLE_MASK (1 << STEPPERS_DISABLE_BIT)
 
@@ -70,13 +73,13 @@
 
 // 定义用户控制（循环启动、复位、进给保持）输入引脚。
 // 注意：所有控制管脚必须位于同一端口上，而不是位于具有其他输入管脚的端口上（限位）。
-#define CONTROL_DDR P2M0
-#define CONTROL_PIN P2INTF
-#define CONTROL_PORT P2
-#define CONTROL_RESET_BIT       0 // Uno模拟引脚0
-#define CONTROL_FEED_HOLD_BIT   1 // Uno模拟引脚1
-#define CONTROL_CYCLE_START_BIT 2 // Uno模拟引脚2
-#define CONTROL_SAFETY_DOOR_BIT 3 // Uno模拟引脚1注：安全门与馈电保持共用。由配置定义启用。
+#define CONTROL_DDR P3M0
+#define CONTROL_PIN P3INTF
+#define CONTROL_PORT P3
+#define CONTROL_RESET_BIT       2 // Uno模拟引脚0
+#define CONTROL_FEED_HOLD_BIT   3 // Uno模拟引脚1
+#define CONTROL_CYCLE_START_BIT 4 // Uno模拟引脚2
+#define CONTROL_SAFETY_DOOR_BIT 5 // Uno模拟引脚1注：安全门与馈电保持共用。由配置定义启用。
 // #define CONTROL_INT PCIE1         // 引脚更改中断启用引脚
 // #define CONTROL_INT_vect PCINT1_vect
 // #define CONTROL_PCMSK PCMSK1 // 引脚改变中断寄存器
