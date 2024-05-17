@@ -44,7 +44,6 @@ void probe_configure_invert_mask(uint8_t is_probe_away)
 
 //返回探针引脚状态。触发=真。由gcode解析器和探测状态监视器调用。
 uint8_t probe_get_state() { 
-  return 0;
   return((PROBE_PIN & PROBE_MASK) ^ probe_invert_mask); 
 }
 

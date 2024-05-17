@@ -96,8 +96,10 @@ void report_grbl_help();
 //打印Grbl全局设置
 void report_grbl_settings();
 
+#ifdef REPORT_ECHO_LINE_RECEIVED
 //打印在执行之前收到的预解析行的回显。
 void report_echo_line_received(char *line);
+#endif
 
 //打印实时状态报告
 void report_realtime_status();

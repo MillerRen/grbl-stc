@@ -154,20 +154,24 @@ void limits_go_home(uint8_t cycle_mask)
 	int32_t set_axis_position;
 	//初始化归位运动的平面数据结构。主轴和冷却液已禁用。
   plan_line_data_t plan_data;
-  plan_line_data_t *pl_data;
+  plan_line_data_t *pl_data = &plan_data;
 	uint8_t n_cycle;
   uint8_t step_pin[N_AXIS];
-	uint8_t step_pin_dual;
-  uint8_t dual_axis_async_check;
-  int32_t dual_trigger_position;
+  
 	float target[N_AXIS];
   float max_travel = 0.0;
   uint8_t idx;
-	float fail_distance;
 	bool approach = true;
   float homing_rate;
 
   uint8_t limit_state, axislock, n_active_axis;
+
+  #ifdef ENABLE_DUAL_AXIS
+	uint8_t step_pin_dual;
+  uint8_t dual_axis_async_check;
+  int32_t dual_trigger_position;
+	float fail_distance;
+  #endif
 	
   if (sys.abort) { return; } //如果已发出系统重置，则阻塞。
 

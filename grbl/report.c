@@ -442,13 +442,14 @@ void report_build_info(char *line)
   report_util_feedback_line_feed();
 }
 
-
+#ifdef REPORT_ECHO_LINE_RECEIVED
 //打印Grbl从用户处收到的字符串行，该字符串行已预解析，并已发送到protocol_execute_line例程中，由Grbl执行。
 void report_echo_line_received(char *line)
 {
   printPgmString(PSTR("[echo: ")); printString(line);
   report_util_feedback_line_feed();
 }
+#endif
 
 
  //打印实时数据。此函数获取步进子程序的实时快照和数控机床的实际位置。
