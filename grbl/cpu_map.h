@@ -57,9 +57,11 @@
 
 // 定义归位/硬限位开关输入引脚和限位中断向量。
 // 注意：所有限制位引脚必须位于同一端口上，但不能位于具有其他输入引脚（控制）的端口上。
-#define LIMIT_DDR P0M0
-#define LIMIT_PIN P0
-#define LIMIT_PORT P0
+#define LIMIT_DDR   P0M0
+#define LIMIT_DDR_1 P0M0
+#define LIMIT_PIN   P0
+#define LIMIT_PULL_UP P0PU
+#define LIMIT_PULL_DOWN P0PD
 #define X_LIMIT_BIT 2 // Uno数字管脚9
 #define Y_LIMIT_BIT 3 // Uno数字管脚10
 #define Z_LIMIT_BIT 4 // Uno数字管脚12
@@ -67,9 +69,11 @@
 #if !defined(ENABLE_DUAL_AXIS)
 #define LIMIT_MASK ((1 << X_LIMIT_BIT) | (1 << Y_LIMIT_BIT) | (1 << Z_LIMIT_BIT)) // 所有限制位
 #endif
-// #define LIMIT_INT PCIE0 // 引脚更改中断启用引脚
-// #define LIMIT_INT_vect PCINT0_vect
-// #define LIMIT_PCMSK PCMSK0 // Pin change interrupt register
+#define LIMIT_INT P0INTE // 引脚更改中断启用引脚
+#define LIMIT_INTF P0INTF // 引脚中断状态寄存器
+#define LIMIT_INT_vect P0INT_VECTOR // 引脚中断
+#define LIMIT_PCMSK P0IM0 // 端口中断模式配置寄存器
+#define LIMIT_PCMSK_1 P0IM1 // 端口中断模式配置寄存器
 
 // 定义用户控制（循环启动、复位、进给保持）输入引脚。
 // 注意：所有控制管脚必须位于同一端口上，而不是位于具有其他输入管脚的端口上（限位）。

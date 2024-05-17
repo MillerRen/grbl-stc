@@ -32,30 +32,27 @@
 #endif
 
 void limits_init()
-{
-      
-      P3M0 |= LIMIT_MASK;
-      P3M1 |= LIMIT_MASK;
-      P3IM0 &= LIMIT_MASK; 
-      P3IM1 &= LIMIT_MASK;
-      P3PU |= LIMIT_MASK; 
+{  
+  LIMIT_DDR &= ~(LIMIT_MASK); //设置为高阻输入引脚
+  LIMIT_DDR_1 |=  (LIMIT_MASK); //设置为高阻输入引脚
 
-      P3INTE |= LIMIT_MASK;
-  
-  // LIMIT_DDR &= ~(LIMIT_MASK); //设置为输入引脚
+  #ifdef ENABLE_LIMIT_PIN_PULL_UP
+    LIMIT_PULL_UP |= (LIMIT_MASK);  //启用内部上拉电阻器。正常高位运行。
+  #endif
 
-  #ifdef DISABLE_LIMIT_PIN_PULL_UP
-    LIMIT_PORT &= ~(LIMIT_MASK); //正常低电压运行。需要外部下拉。
-  #else
-    // LIMIT_PORT |= (LIMIT_MASK);  //启用内部上拉电阻器。正常高位运行。
+  #ifdef ENABLE_LIMIT_PIN_PULL_DOWN
+    LIMIT_PULL_DOWN |= (LIMIT_MASK);  //启用内部上拉电阻器。正常高位运行。
   #endif
 
   if (bit_istrue(settings.flags,BITFLAG_HARD_LIMIT_ENABLE)) {
-//    LIMIT_PCMSK |= LIMIT_MASK; //启用管脚更改中断的特定管脚
-//    PCICR |= (1 << LIMIT_INT); //启用引脚更改中断
+   LIMIT_PCMSK   &= ~LIMIT_MASK; //启用下降沿中断的特定管脚
+   LIMIT_PCMSK_1 &= ~LIMIT_MASK; //启用下降沿中断的特定管脚
+   LIMIT_INT |= LIMIT_MASK;    //启用引脚更改中断
   } else {
     limits_disable();
   }
+
+  LIMIT_INTF &= ~LIMIT_MASK; // 清0中断标志
 
   #ifdef ENABLE_SOFTWARE_DEBOUNCE
     //MCUSR &= ~(1<<WDRF);
@@ -68,9 +65,9 @@ void limits_init()
 //禁用硬限位。
 void limits_disable()
 {
- // LIMIT_PCMSK &= ~LIMIT_MASK;  //禁用管脚更改中断的特定管脚
- // PCICR &= ~(1 << LIMIT_INT);  //禁用引脚更改中断
-//  P1INTE = 0x00;
+ LIMIT_PCMSK &= ~LIMIT_MASK;  //禁用管脚更改中断的特定管脚
+ LIMIT_PCMSK_1 &= ~LIMIT_MASK;  //禁用管脚更改中断的特定管脚
+ LIMIT_INT   &= ~LIMIT_MASK;    //禁用特定管脚中断
 }
 
 
@@ -107,10 +104,10 @@ uint8_t limits_get_state()
 // 注意：不要将急停装置连接到限位引脚上，因为该中断在复位循环期间被禁用，并且不会正确响应。
 //根据用户要求或需要，可能会有一个特殊的急停引脚，但通常建议直接将急停开关连接到Arduino复位引脚，因为这是最正确的方法。
 #ifndef ENABLE_SOFTWARE_DEBOUNCE
-  void LIMIT_INT_vect () interrupt P3INT_VECTOR//默认值：限制引脚更改中断处理。
+  void LIMIT_INT_vect_ISR () interrupt LIMIT_INT_vect//默认值：限制引脚更改中断处理。
   {
-    printf("limit:%bu", P3INTF);
-    P3INTF &= ~LIMIT_MASK;
+    // printf("limit:%bu", LIMIT_PIN);
+    LIMIT_INTF &= ~LIMIT_MASK;
     //如果已经处于报警状态或正在执行报警，则忽略限位开关。
     //当处于报警状态时，Grbl应已重置或将强制重置，因此规划器和串行缓冲区中的任何等待运动都将被清除，新发送的块将被锁定，直到重新定位循环或终止锁定命令。
     //允许用户禁用硬限位设置，如果重置后不断触发其限位并移动其轴。

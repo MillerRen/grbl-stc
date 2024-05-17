@@ -266,7 +266,7 @@
 //这也颠覆了反向引脚Grbl设置的含义，反向设置现在意味着用户应连接正常打开的开关，反之亦然。
 //注：与该特征相关的所有引脚均被禁用，即XYZ限位引脚，而不是单个轴。
 //警告：当上拉被禁用时，这需要使用下拉电阻器进行额外接线！
-//#define DISABLE_LIMIT_PIN_PULL_UP
+#define ENABLE_LIMIT_PIN_PULL_UP
 //#define DISABLE_PROBE_PIN_PULL_UP
 //#define DISABLE_CONTROL_PIN_PULL_UP
 
