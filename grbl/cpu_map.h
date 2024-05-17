@@ -58,7 +58,7 @@
 // 定义归位/硬限位开关输入引脚和限位中断向量。
 // 注意：所有限制位引脚必须位于同一端口上，但不能位于具有其他输入引脚（控制）的端口上。
 #define LIMIT_DDR   P0M0
-#define LIMIT_DDR_1 P0M0
+#define LIMIT_DDR_1 P0M1
 #define LIMIT_PIN   P0
 #define LIMIT_PULL_UP P0PU
 #define LIMIT_PULL_DOWN P0PD

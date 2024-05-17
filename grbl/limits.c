@@ -33,8 +33,8 @@
 
 void limits_init()
 {  
-  LIMIT_DDR &= ~(LIMIT_MASK); //设置为高阻输入引脚
-  LIMIT_DDR_1 |=  (LIMIT_MASK); //设置为高阻输入引脚
+  LIMIT_DDR   |= (LIMIT_MASK); //设置为开漏输入
+  LIMIT_DDR_1 |= (LIMIT_MASK); //设置为开漏输入
 
   #ifdef ENABLE_LIMIT_PIN_PULL_UP
     LIMIT_PULL_UP |= (LIMIT_MASK);  //启用内部上拉电阻器。正常高位运行。
@@ -47,7 +47,7 @@ void limits_init()
   if (bit_istrue(settings.flags,BITFLAG_HARD_LIMIT_ENABLE)) {
    LIMIT_PCMSK   &= ~LIMIT_MASK; //启用下降沿中断的特定管脚
    LIMIT_PCMSK_1 &= ~LIMIT_MASK; //启用下降沿中断的特定管脚
-   LIMIT_INT |= LIMIT_MASK;    //启用引脚更改中断
+   LIMIT_INT     |= LIMIT_MASK;  //启用引脚更改中断
   } else {
     limits_disable();
   }
@@ -106,8 +106,8 @@ uint8_t limits_get_state()
 #ifndef ENABLE_SOFTWARE_DEBOUNCE
   void LIMIT_INT_vect_ISR () interrupt LIMIT_INT_vect//默认值：限制引脚更改中断处理。
   {
-    // printf("limit:%bu", LIMIT_PIN);
-    LIMIT_INTF &= ~LIMIT_MASK;
+    // printf("limit:%bu", LIMIT_INTF);
+    LIMIT_INTF &= ~LIMIT_MASK; // 清零中断标志，以便继续响应中断
     //如果已经处于报警状态或正在执行报警，则忽略限位开关。
     //当处于报警状态时，Grbl应已重置或将强制重置，因此规划器和串行缓冲区中的任何等待运动都将被清除，新发送的块将被锁定，直到重新定位循环或终止锁定命令。
     //允许用户禁用硬限位设置，如果重置后不断触发其限位并移动其轴。

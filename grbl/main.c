@@ -78,7 +78,7 @@ int main(void)
     gc_init(); // 设置G代码解析器到默认状态。
     spindle_init(); // 初始化主轴子系统
     coolant_init(); // 初始化冷却子系统
-    // limits_init(); // 初始化限位子系统
+    limits_init(); // 初始化限位子系统
     probe_init(); // 初始化对刀子系统
     plan_reset(); // 清空块缓冲区和规划器变量。
     st_reset(); // 清空步进子系统变量。
