@@ -162,7 +162,6 @@ void report_feedback_message(uint8_t message_code)
 void report_init_message()
 {
   printPgmString(PSTR("\r\nGrbl " GRBL_VERSION " ['$' for help]\r\n"));
-  // printf(PSTR("\r\nGrbl " GRBL_VERSION " ['$' for help]\r\n"));
 }
 
 //Grbl帮助消息

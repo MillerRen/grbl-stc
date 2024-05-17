@@ -104,7 +104,6 @@ uint8_t limits_get_state()
 #ifndef ENABLE_SOFTWARE_DEBOUNCE
   void LIMIT_INT_vect_ISR () interrupt LIMIT_INT_vect//默认值：限制引脚更改中断处理。
   {
-    // printf("limit:%bu", LIMIT_INTF);
     LIMIT_INTF &= ~LIMIT_MASK; // 清零中断标志，以便继续响应中断
     //如果已经处于报警状态或正在执行报警，则忽略限位开关。
     //当处于报警状态时，Grbl应已重置或将强制重置，因此规划器和串行缓冲区中的任何等待运动都将被清除，新发送的块将被锁定，直到重新定位循环或终止锁定命令。

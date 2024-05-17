@@ -68,57 +68,50 @@ void print_uint8_base10(uint8_t n)
   if (digit_b) { serial_write(digit_b); }
   if (digit_a) { serial_write(digit_a); }
 }
-// void print_uint8_base10(uint8_t n) {
-//   printf("%bu", n);
-// }
 
 //以所需位数打印基数2中的uint8变量。
-//void print_uint8_base2_ndigit(uint8_t n, uint8_t digits) {
-  //unsigned char buf[digits];
-  //uint8_t i = 0;
+void print_uint8_base2_ndigit(uint8_t n, uint8_t digits) {
+  unsigned char buf[digits];
+  uint8_t i = 0;
 
-  //for (; i < digits; i++) {
-      //buf[i] = n % 2 ;
-      //n /= 2;
-  //}
+  for (; i < digits; i++) {
+      buf[i] = n % 2 ;
+      n /= 2;
+  }
 
-  //for (; i > 0; i--)
-      //serial_write('0' + buf[i - 1]);
-//}
+  for (; i > 0; i--)
+      serial_write('0' + buf[i - 1]);
+}
 
 
-// void print_uint32_base10(uint32_t n)
-// {
-// 	unsigned char buf[10];
-//   uint8_t i = 0;
+void print_uint32_base10(uint32_t n)
+{
+	unsigned char buf[10];
+  uint8_t i = 0;
 	
-//   if (n == 0) {
-//     serial_write('0');
-//     return;
-//   }
+  if (n == 0) {
+    serial_write('0');
+    return;
+  }
 
-//   while (n > 0) {
-//     buf[i++] = n % 10;
-//     n /= 10;
-//   }
+  while (n > 0) {
+    buf[i++] = n % 10;
+    n /= 10;
+  }
 
-//   for (; i > 0; i--)
-//     serial_write('0' + buf[i-1]);
-// }
-// void print_uint32_base10(uint32_t n) {
-//   printf("%lu", n);
-// }
+  for (; i > 0; i--)
+    serial_write('0' + buf[i-1]);
+}
 
-
-// void printInteger(long n)
-// {
-//   if (n < 0) {
-//     serial_write('-');
-//     print_uint32_base10(-n);
-//   } else {
-//     print_uint32_base10(n);
-//   }
-// }
+void printInteger(long n)
+{
+  if (n < 0) {
+    serial_write('-');
+    print_uint32_base10(-n);
+  } else {
+    print_uint32_base10(n);
+  }
+}
 
 
 //通过立即转换为长整数，将浮点转换为字符串，长整数包含的数字比浮点多。
@@ -162,9 +155,6 @@ void printFloat(float n, uint8_t decimal_places)
     serial_write(buf[i-1]);
   }
 }
-// void printFloat(float n, uint8_t decimal_places) {
-//   printf("%f", n);
-// }
 
 //Grbl中使用的特殊变量类型的浮点值打印处理程序，在配置中定义。H
 //-坐标值：以英寸或毫米为单位处理所有位置或坐标值。
