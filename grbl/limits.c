@@ -45,8 +45,8 @@ void limits_init()
   #endif
 
   if (bit_istrue(settings.flags,BITFLAG_HARD_LIMIT_ENABLE)) {
-   LIMIT_PCMSK   &= ~LIMIT_MASK; //启用下降沿中断的特定管脚
-   LIMIT_PCMSK_1 &= ~LIMIT_MASK; //启用下降沿中断的特定管脚
+   LIMIT_PCMSK   &= ~LIMIT_MASK; //配置特定管脚为下降沿中断
+   LIMIT_PCMSK_1 &= ~LIMIT_MASK; //配置特定管脚为下降沿中断
    LIMIT_INT     |= LIMIT_MASK;  //启用引脚更改中断
   } else {
     limits_disable();
@@ -65,8 +65,6 @@ void limits_init()
 //禁用硬限位。
 void limits_disable()
 {
- LIMIT_PCMSK &= ~LIMIT_MASK;  //禁用管脚更改中断的特定管脚
- LIMIT_PCMSK_1 &= ~LIMIT_MASK;  //禁用管脚更改中断的特定管脚
  LIMIT_INT   &= ~LIMIT_MASK;    //禁用特定管脚中断
 }
 

@@ -59,7 +59,7 @@
 // 注意：所有限制位引脚必须位于同一端口上，但不能位于具有其他输入引脚（控制）的端口上。
 #define LIMIT_DDR   P0M0
 #define LIMIT_DDR_1 P0M1
-#define LIMIT_PIN   P0
+#define LIMIT_PIN   P0INTF
 #define LIMIT_PULL_UP P0PU
 #define LIMIT_PULL_DOWN P0PD
 #define X_LIMIT_BIT 2 // Uno数字管脚9
