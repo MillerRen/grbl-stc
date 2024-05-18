@@ -508,6 +508,41 @@
             </File>
           </Files>
         </Group>
+        <Group>
+          <GroupName>lib</GroupName>
+          <Files>
+            <File>
+              <FileName>usb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\lib\usb.c</FilePath>
+            </File>
+            <File>
+              <FileName>usb_desc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\lib\usb_desc.c</FilePath>
+            </File>
+            <File>
+              <FileName>usb_req_class.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\lib\usb_req_class.c</FilePath>
+            </File>
+            <File>
+              <FileName>usb_req_std.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\lib\usb_req_std.c</FilePath>
+            </File>
+            <File>
+              <FileName>usb_req_vendor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\lib\usb_req_vendor.c</FilePath>
+            </File>
+            <File>
+              <FileName>util.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\lib\util.c</FilePath>
+            </File>
+          </Files>
+        </Group>
       </Groups>
     </Target>
   </Targets>

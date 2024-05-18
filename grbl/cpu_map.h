@@ -247,12 +247,16 @@
 
 #endif
 
-/*
-#ifdef CPU_MAP_CUSTOM_PROC
-  //对于自定义pin映射或不同的处理器，请复制并编辑一个可用的cpu
-//映射文件并根据需要进行修改。确保在中也更改了定义的名称
-//config.h文件。
-#endif
-*/
+#define EN_EP1IN
+#define EN_EP2IN
+//#define EN_EP3IN
+//#define EN_EP4IN
+//#define EN_EP5IN
+#define EN_EP1OUT
+//#define EN_EP2OUT
+//#define EN_EP3OUT
+//#define EN_EP4OUT
+//#define EN_EP5OUT
+
 
 #endif

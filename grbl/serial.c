@@ -68,7 +68,34 @@ void serial_init()
 	tx_busy = false;
 }
 
+void usb_init()
+{
+    P3M0 &= ~0x03;
+    P3M1 |= 0x03;
+    
+    IRC48MCR = 0x80;
+    while (!(IRC48MCR & 0x01));
+    
+    USBCLK = 0x00;
+    USBCON = 0x90;
 
+    usb_write_reg(FADDR, 0x00);
+    usb_write_reg(POWER, 0x08);
+    usb_write_reg(INTRIN1E, 0x3f);
+    usb_write_reg(INTROUT1E, 0x3f);
+    usb_write_reg(INTRUSBE, 0x07);
+    usb_write_reg(POWER, 0x00);
+
+    DeviceState = DEVSTATE_DEFAULT;
+    Ep0State.bState = EPSTATE_IDLE;
+    InEpState = 0x00;
+    OutEpState = 0x00;
+
+    UsbInBusy = 0;
+    UsbOutBusy = 0;
+
+    IE2 |= 0x80;    //EUSB = 1;
+}
 
 
 // 写入一个字节到串口发送缓冲区。被主程序调用。
@@ -215,4 +242,34 @@ void serial_isr () interrupt 4 {
 void serial_reset_read_buffer()
 {
   serial_rx_buffer_tail = serial_rx_buffer_head;
+}
+
+
+void usb_isr() interrupt 25
+{
+    uint8_t intrusb;
+    uint8_t intrin;
+    uint8_t introut;
+
+    intrusb = usb_read_reg(INTRUSB);
+    intrin = usb_read_reg(INTRIN1);
+    introut = usb_read_reg(INTROUT1);
+
+    if (intrusb & RSUIF) usb_resume();
+    if (intrusb & RSTIF) usb_reset();
+
+    if (intrin & EP0IF) usb_setup();
+
+#ifdef EN_EP1IN
+    if (intrin & EP1INIF) usb_in_ep1();
+#endif
+#ifdef EN_EP2IN
+    if (intrin & EP2INIF) usb_in_ep2();
+#endif
+
+#ifdef EN_EP1OUT
+    if (introut & EP1OUTIF) usb_out_ep1();
+#endif
+
+    if (intrusb & SUSIF) usb_suspend();
 }

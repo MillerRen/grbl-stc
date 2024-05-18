@@ -10,6 +10,7 @@
         "stc8h.h": "c",
         "STC8H.H": "cpp",
         "intrins.h": "c",
-        "stdint.h": "c"
+        "stdint.h": "c",
+        "usb.h": "c"
     }
 }

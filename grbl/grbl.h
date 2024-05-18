@@ -57,6 +57,7 @@
 #include "protocol.h"
 #include "report.h"
 #include "serial.h"
+#include "usb.h"
 #include "spindle_control.h"
 #include "stepper.h"
 #include "jog.h"
