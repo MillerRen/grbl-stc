@@ -76,12 +76,3 @@ void usb_set_ctrl_line_state()
 
     usb_setup_status();
 }
-
-void usb_uart_settings()
-{
-    if (Setup.bRequest == SET_LINE_CODING)
-    {
-        LineCoding.bCharFormat = 0;
-        LineCoding.bDataBits = 8;
-    }
-}

@@ -17,14 +17,13 @@
 #include "usb_req_vendor.h"
 #include "util.h"
 
-uint8_t DeviceState;
+uint8_t DeviceState = DEVSTATE_DEFAULT;
 SETUP Setup;
 EPSTATE Ep0State;
-uint8_t InEpState;
-uint8_t OutEpState;
+uint8_t InEpState = 0x00;
+uint8_t OutEpState = 0x00;
 
-bool UsbInBusy;
-bool UsbOutBusy;
+    // Ep0State.bState = EPSTATE_IDLE;
 
 
 uint8_t usb_read_reg(uint8_t addr)
@@ -219,73 +218,28 @@ void usb_ctrl_out()
     usb_uart_settings();
 }
 
-#ifdef EN_EP1IN
-void usb_in_ep1()
+void usb_bulk_intr_in(uint8_t *pData, uint8_t bSize, uint8_t ep)
 {
-    uint8_t csr;
-
-    usb_write_reg(INDEX, 1);
-    csr = usb_read_reg(INCSR1);
-    if (csr & INSTSTL)
-    {
-        usb_write_reg(INCSR1, INCLRDT);
-    }
-    if (csr & INUNDRUN)
-    {
-        usb_write_reg(INCSR1, 0);
-    }
-
-    UsbInBusy = 0;
+    usb_write_fifo((uint8_t)(FIFO0 + ep), pData, bSize);
+    usb_write_reg(INCSR1, INIPRDY);
 }
-#endif
 
-#ifdef EN_EP2IN
-void usb_in_ep2()
+uint8_t usb_bulk_intr_out(uint8_t *pData, uint8_t ep)
 {
-    uint8_t csr;
-
-    usb_write_reg(INDEX, 2);
-    csr = usb_read_reg(INCSR1);
-    if (csr & INSTSTL)
-    {
-        usb_write_reg(INCSR1, INCLRDT);
-    }
-    if (csr & INUNDRUN)
-    {
-        usb_write_reg(INCSR1, 0);
-    }
-}
-#endif
-
-
-#ifdef EN_EP1OUT
-void usb_out_ep1()
-{
-    uint8_t csr;
     uint8_t cnt;
 
-    usb_write_reg(INDEX, 1);
-    csr = usb_read_reg(OUTCSR1);
-    if (csr & OUTSTSTL)
-    {
-        usb_write_reg(OUTCSR1, OUTCLRDT);
-    }
-    if (csr & OUTOPRDY)
-    {
-        cnt = usb_read_reg(OUTCOUNT1);
-        while (cnt--)
-        {
-            RxBuffer[RxWptr++] = usb_read_reg(FIFO1);
-        }
-        if (RxWptr - RxRptr >= 256 - EP1OUT_SIZE)
-        {
-            UsbOutBusy = 1;
-        }
-        else
-        {
-            usb_write_reg(OUTCSR1, 0);
-        }
-    }
-}
-#endif
+    cnt = usb_read_fifo((uint8_t)(FIFO0 + ep), pData);
+    usb_write_reg(OUTCSR1, 0);
 
+    return cnt;
+}
+
+bool usb_bulk_intr_in_busy()
+{
+    return (usb_read_reg(INCSR1) & INIPRDY);
+}
+
+bool usb_bulk_intr_out_ready()
+{
+    return (usb_read_reg(OUTCSR1) & OUTOPRDY);
+}

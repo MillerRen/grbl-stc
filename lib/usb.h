@@ -91,32 +91,11 @@ void usb_resume();
 void usb_reset();
 void usb_suspend();
 void usb_setup();
-void usb_in_ep1();
-void usb_in_ep2();
-void usb_in_ep3();
-void usb_in_ep4();
-void usb_in_ep5();
-void usb_out_ep1();
-void usb_out_ep2();
-void usb_out_ep3();
-void usb_out_ep4();
-void usb_out_ep5();
-
 
 extern uint8_t DeviceState;
 extern SETUP Setup;
 extern EPSTATE Ep0State;
 extern uint8_t InEpState;
 extern uint8_t OutEpState;
-
-extern bool UsbInBusy;
-extern bool UsbOutBusy;
-
-extern uint8_t RxRptr;
-extern uint8_t RxWptr;
-extern uint8_t TxRptr;
-extern uint8_t TxWptr;
-extern uint8_t xdata RxBuffer[256];
-extern uint8_t xdata TxBuffer[256];
 
 #endif
