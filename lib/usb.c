@@ -77,7 +77,7 @@ void usb_out_ep1() // 接收数据处理
         cnt = usb_read_reg(OUTCOUNT1);
         while (cnt--)
         {
-          SERIAL_RX_ISR(usb_read_reg(FIFO1));
+          usb_out_callback(usb_read_reg(FIFO1));
         }
        usb_write_reg(OUTCSR1, 0);
     }

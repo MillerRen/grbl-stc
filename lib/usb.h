@@ -98,6 +98,6 @@ extern EPSTATE Ep0State;
 extern uint8_t InEpState;
 extern uint8_t OutEpState;
 
-extern void SERIAL_RX_ISR(uint8_t _data);
+extern void usb_out_callback(uint8_t dat);
 
 #endif

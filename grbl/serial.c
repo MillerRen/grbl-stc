@@ -187,6 +187,10 @@ void SERIAL_RX_ISR(uint8_t _data)
   }
 }
 
+void usb_out_callback (uint8_t dat) {
+  SERIAL_RX_ISR(dat);
+}
+
 // 串口中断响应
 void serial_isr () interrupt UART1_VECTOR {
 	if(TI) {
