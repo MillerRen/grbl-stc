@@ -59,7 +59,7 @@ uint8_t serial_get_tx_buffer_count()
 // 串口初始化
 void serial_init()
 {
-  P_SW1 |= 0x20;  //串口1脚位切换到P3.6、P3.7
+  P_SW1 = (P_SW1 & ~0xc0) | 0x40;		//UART1/USART1: RxD(P3.6), TxD(P3.7)
   SCON = 0x50;    //8位数据,可变波特率，允许串口接收数据
   AUXR |= 0x01;		//串口1选择定时器2为波特率发生器
 	AUXR |= 0x04;		//定时器时钟1T模式
