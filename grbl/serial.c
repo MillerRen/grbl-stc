@@ -69,26 +69,35 @@ void serial_init()
 	tx_busy = false;
 }
 
-// 写入一个字节到串口发送缓冲区。被主程序调用。
-void serial_write(uint8_t _data) {
-  // 计算下一个头指针，如果已经到达最大值，移到开始，形成环形
-  uint8_t next_head = serial_tx_buffer_head + 1;
-  if (next_head == TX_RING_BUFFER) { next_head = 0; }
+// // 写入一个字节到串口发送缓冲区。被主程序调用。
+// void serial_write(uint8_t _data) {
+//   // 计算下一个头指针，如果已经到达最大值，移到开始，形成环形
+//   uint8_t next_head = serial_tx_buffer_head + 1;
+//   if (next_head == TX_RING_BUFFER) { next_head = 0; }
 
-  // 等待，直到缓冲区有空间
-  while (next_head == serial_tx_buffer_tail) {
-    // 代办：重构st_prep_tx_buffer()调用，在长打印期间在这里执行。
-    if (sys_rt_exec_state & EXEC_RESET) { return; } // 只检查终止防止死循环。
-  }
+//   // 等待，直到缓冲区有空间
+//   while (next_head == serial_tx_buffer_tail) {
+//     // 代办：重构st_prep_tx_buffer()调用，在长打印期间在这里执行。
+//     if (sys_rt_exec_state & EXEC_RESET) { return; } // 只检查终止防止死循环。
+//   }
 
-  // 储存数据并向前移动头指针
-  serial_tx_buffer[serial_tx_buffer_head] = _data;
-  serial_tx_buffer_head = next_head;
-	// 如果发送队列不为空，启动发送
-  if(!tx_busy){
-    TI = 1;
-    tx_busy = true;
-  }
+//   // 储存数据并向前移动头指针
+//   serial_tx_buffer[serial_tx_buffer_head] = _data;
+//   serial_tx_buffer_head = next_head;
+// 	// 如果发送队列不为空，启动发送
+//   if(!tx_busy){
+//     TI = 1;
+//     tx_busy = true;
+//   }
+// }
+
+void serial_write(unsigned char dat) {
+  IE2 &= ~0x80;   //EUSB = 0;
+        // UsbInBusy = 1;
+        usb_write_reg(INDEX, 1);
+        usb_write_reg(FIFO1, dat);
+        usb_write_reg(INCSR1, INIPRDY);
+        IE2 |= 0x80;    //EUSB = 1;
 }
 
 char putchar(char c) {
@@ -230,7 +239,8 @@ void usb_in_ep1()
     }
     if (csr & INUNDRUN)
     {
-        usb_write_reg(INCSR1, 0);
+      // SERIAL_TX_ISR();
+      usb_write_reg(INCSR1, 0);
     }
 
     UsbInBusy = 0;
@@ -257,6 +267,7 @@ void usb_out_ep1() // 接收数据处理
         {
           SERIAL_RX_ISR();
         }
+        // 缓冲区容不下一个数据段时，标记从usb接收忙
         // if (RxWptr - RxRptr >= 256 - EP1OUT_SIZE)
         // {
         //     UsbOutBusy = 1;

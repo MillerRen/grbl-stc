@@ -12,7 +12,6 @@
 #define SPACE_PARITY            4
 
 void usb_req_class();
-void usb_uart_settings();
 
 void usb_set_line_coding();
 void usb_get_line_coding();

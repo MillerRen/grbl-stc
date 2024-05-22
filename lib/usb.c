@@ -23,8 +23,6 @@ EPSTATE Ep0State;
 uint8_t InEpState = 0x00;
 uint8_t OutEpState = 0x00;
 
-    // Ep0State.bState = EPSTATE_IDLE;
-
 
 uint8_t usb_read_reg(uint8_t addr)
 {
@@ -50,7 +48,7 @@ uint8_t usb_read_fifo(uint8_t fifo, uint8_t *pdat)
     uint8_t cnt;
     uint8_t ret;
 
-    ret = cnt = usb_read_reg(COUNT0);
+    ret = cnt = usb_read_reg(COUNT0); // COUNT0和OUTCOUNT1地址相同
     while (cnt--)
     {
     	*pdat++ = usb_read_reg(fifo);
@@ -215,7 +213,6 @@ void usb_ctrl_out()
         usb_write_reg(CSR0, SOPRDY);
     }
 
-    usb_uart_settings();
 }
 
 void usb_bulk_intr_in(uint8_t *pData, uint8_t bSize, uint8_t ep)

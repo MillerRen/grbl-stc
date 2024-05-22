@@ -71,6 +71,7 @@ void protocol_main_loop()
 
     // 处理一行从串口缓冲区到来的数据，如果数据可用的话。通过溢出空格和注释执行一个初始的过滤，并且大写所有字母。
     while((c = serial_read()) != SERIAL_NO_DATA) { // 从串口读取一个字节，直到遇到结束符
+    P1 = ~P1;
       if ((c == '\n') || (c == '\r')) { // 到达一行
 
         protocol_execute_realtime(); // 运行时命令检查点
