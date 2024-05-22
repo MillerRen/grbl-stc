@@ -17,11 +17,132 @@
 #include "usb_req_vendor.h"
 #include "util.h"
 
-uint8_t DeviceState = DEVSTATE_DEFAULT;
+uint8_t DeviceState;
 SETUP Setup;
 EPSTATE Ep0State;
-uint8_t InEpState = 0x00;
-uint8_t OutEpState = 0x00;
+uint8_t InEpState;
+uint8_t OutEpState;
+
+
+#ifdef EN_EP1IN
+void usb_in_ep1()
+{
+    uint8_t csr;
+
+    usb_write_reg(INDEX, 1);
+    csr = usb_read_reg(INCSR1);
+    if (csr & INSTSTL)
+    {
+        usb_write_reg(INCSR1, INCLRDT);
+    }
+    if (csr & INUNDRUN)
+    {
+      usb_write_reg(INCSR1, 0);
+    }
+
+}
+#endif
+#ifdef EN_EP2IN
+void usb_in_ep2() // 端点2用于AT命令
+{
+    unsigned char csr;
+
+    usb_write_reg(INDEX, 2);
+    csr = usb_read_reg(INCSR1);
+    if (csr & INSTSTL)
+    {
+        usb_write_reg(INCSR1, INCLRDT);
+    }
+    if (csr & INUNDRUN)
+    {
+        usb_write_reg(INCSR1, 0);
+    }
+}
+#endif
+
+#ifdef EN_EP1OUT
+void usb_out_ep1() // 接收数据处理
+{
+    uint8_t csr;
+    uint8_t cnt;
+
+    usb_write_reg(INDEX, 1);
+    csr = usb_read_reg(OUTCSR1);
+    if (csr & OUTSTSTL)
+    {
+        usb_write_reg(OUTCSR1, OUTCLRDT);
+    }
+    if (csr & OUTOPRDY)
+    {
+        cnt = usb_read_reg(OUTCOUNT1);
+        while (cnt--)
+        {
+          SERIAL_RX_ISR(usb_read_reg(FIFO1));
+        }
+       usb_write_reg(OUTCSR1, 0);
+    }
+}
+#endif
+
+void usb_isr() interrupt USB_VECTOR
+{
+    uint8_t intrusb;
+    uint8_t intrin;
+    uint8_t introut;
+
+    intrusb = usb_read_reg(INTRUSB);
+    intrin = usb_read_reg(INTRIN1);
+    introut = usb_read_reg(INTROUT1);
+
+    if (intrusb & RSUIF) usb_resume();
+    if (intrusb & RSTIF) usb_reset();
+
+    if (intrin & EP0IF) usb_setup();
+
+#ifdef EN_EP1IN
+    if (intrin & EP1INIF) usb_in_ep1();
+#endif
+#ifdef EN_EP2IN
+    if (intrin & EP2INIF) usb_in_ep2();
+#endif
+
+#ifdef EN_EP1OUT
+    if (introut & EP1OUTIF) usb_out_ep1();
+#endif
+
+    if (intrusb & SUSIF) usb_suspend();
+}
+
+
+void usb_init()
+{
+    DeviceState = DEVSTATE_DEFAULT;
+    Ep0State.bState = EPSTATE_IDLE;
+    InEpState = 0x00;
+    OutEpState = 0x00;
+    LineCoding.dwDTERate = 0x00c20100;  //115200
+    LineCoding.bCharFormat = 0;
+    LineCoding.bParityType = 0;
+    LineCoding.bDataBits = 8;
+
+    P3M0 &= ~0x03;
+    P3M1 |= 0x03;
+    
+    IRC48MCR = 0x80;
+    while (!(IRC48MCR & 0x01));
+    
+    USBCLK = 0x00;
+    USBCON = 0x90;
+
+    usb_write_reg(FADDR, 0x00);
+    usb_write_reg(POWER, 0x08);
+    usb_write_reg(INTRIN1E, 0x3);  // USB端点IN中断使能
+    usb_write_reg(INTROUT1E, 0x3); // USB端点OUT中断使能
+    usb_write_reg(INTRUSBE, 0x07);
+    usb_write_reg(POWER, 0x00);
+
+    IE2 |= 0x80;    //EUSB = 1;
+}
 
 
 uint8_t usb_read_reg(uint8_t addr)
@@ -79,6 +200,10 @@ void usb_reset()
 
 #ifdef EN_EP1IN
     usb_write_reg(INDEX, 1);
+    usb_write_reg(INCSR1, INCLRDT | INFLUSH);
+#endif
+#ifdef EN_EP2IN
+    usb_write_reg(INDEX, 2);
     usb_write_reg(INCSR1, INCLRDT | INFLUSH);
 #endif
 #ifdef EN_EP1OUT
@@ -213,6 +338,11 @@ void usb_ctrl_out()
         usb_write_reg(CSR0, SOPRDY);
     }
 
+    if (Setup.bRequest == SET_LINE_CODING)
+    {
+        LineCoding.bCharFormat = 0;
+        LineCoding.bDataBits = 8;
+    }
 }
 
 void usb_bulk_intr_in(uint8_t *pData, uint8_t bSize, uint8_t ep)

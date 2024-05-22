@@ -25,7 +25,6 @@ uint8_t serial_tx_buffer[TX_RING_BUFFER]; // 定义串口发送环形队列
 data uint8_t serial_tx_buffer_head = 0; // 定义串口发送环形队列头指针
 data volatile uint8_t serial_tx_buffer_tail = 0; // 定义串口发送环形队列尾指针
 bool tx_busy;
-bool UsbInBusy;
 
 
 // 返回串口读缓冲区可用字节数。
@@ -130,7 +129,7 @@ void SERIAL_TX_ISR()
 }
 
 // 串口数据接收中断处理
-void SERIAL_RX_ISR(_data)
+void SERIAL_RX_ISR(uint8_t _data)
 {
   // uint8_t _data = SBUF; // 从串口数据寄存器取出数据
   // uint8_t _data = usb_read_reg(FIFO1); // 从USB数据寄存器取出数据
@@ -214,105 +213,5 @@ void serial_reset_read_buffer()
 }
 
 
-#ifdef EN_EP1IN
-void usb_in_ep1()
-{
-    uint8_t csr;
-
-    usb_write_reg(INDEX, 1);
-    csr = usb_read_reg(INCSR1);
-    if (csr & INSTSTL)
-    {
-        usb_write_reg(INCSR1, INCLRDT);
-    }
-    if (csr & INUNDRUN)
-    {
-      usb_write_reg(INCSR1, 0);
-    }
-
-    UsbInBusy = 0;
-}
-#endif
-
-
-#ifdef EN_EP1OUT
-void usb_out_ep1() // 接收数据处理
-{
-    uint8_t csr;
-    uint8_t cnt;
-
-    usb_write_reg(INDEX, 1);
-    csr = usb_read_reg(OUTCSR1);
-    if (csr & OUTSTSTL)
-    {
-        usb_write_reg(OUTCSR1, OUTCLRDT);
-    }
-    if (csr & OUTOPRDY)
-    {
-        cnt = usb_read_reg(OUTCOUNT1);
-        while (cnt--)
-        {
-          SERIAL_RX_ISR(usb_read_reg(FIFO1));
-        }
-        // 缓冲区容不下一个数据段时，标记从usb接收忙
-        // if (RxWptr - RxRptr >= 256 - EP1OUT_SIZE)
-        // {
-        //     UsbOutBusy = 1;
-        // }
-        // else
-        {
-            usb_write_reg(OUTCSR1, 0);
-        }
-    }
-}
-#endif
-
-void usb_isr() interrupt USB_VECTOR
-{
-    uint8_t intrusb;
-    uint8_t intrin;
-    uint8_t introut;
-
-    intrusb = usb_read_reg(INTRUSB);
-    intrin = usb_read_reg(INTRIN1);
-    introut = usb_read_reg(INTROUT1);
-
-    if (intrusb & RSUIF) usb_resume();
-    if (intrusb & RSTIF) usb_reset();
-
-    if (intrin & EP0IF) usb_setup();
-
-#ifdef EN_EP1IN
-    if (intrin & EP1INIF) usb_in_ep1();
-#endif
-
-#ifdef EN_EP1OUT
-    if (introut & EP1OUTIF) usb_out_ep1();
-#endif
-
-    if (intrusb & SUSIF) usb_suspend();
-}
-
-
-void usb_init()
-{
-    P3M0 &= ~0x03;
-    P3M1 |= 0x03;
-    
-    IRC48MCR = 0x80;
-    while (!(IRC48MCR & 0x01));
-    
-    USBCLK = 0x00;
-    USBCON = 0x90;
-
-    usb_write_reg(FADDR, 0x00);
-    usb_write_reg(POWER, 0x08);
-    usb_write_reg(INTRIN1E, 0x3);  // USB端点IN中断使能
-    usb_write_reg(INTROUT1E, 0x3); // USB端点OUT中断使能
-    usb_write_reg(INTRUSBE, 0x07);
-    usb_write_reg(POWER, 0x00);
-
-    IE2 |= 0x80;    //EUSB = 1;
-}
 
 

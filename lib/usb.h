@@ -98,4 +98,6 @@ extern EPSTATE Ep0State;
 extern uint8_t InEpState;
 extern uint8_t OutEpState;
 
+extern void SERIAL_RX_ISR(uint8_t _data);
+
 #endif

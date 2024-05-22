@@ -2,7 +2,7 @@
 #define __CONFIG_H__
 
 #define EN_EP1IN
-// #define EN_EP2IN
+#define EN_EP2IN
 //#define EN_EP3IN
 //#define EN_EP4IN
 //#define EN_EP5IN
@@ -16,6 +16,9 @@
 
 #ifdef EN_EP1IN
 #define EP1IN_SIZE              64
+#endif
+#ifdef EN_EP2IN
+#define EP2IN_SIZE              64
 #endif
 #ifdef EN_EP1OUT
 #define EP1OUT_SIZE             64
