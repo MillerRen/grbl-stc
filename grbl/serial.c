@@ -59,6 +59,7 @@ uint8_t serial_get_tx_buffer_count()
 // 串口初始化
 void serial_init()
 {
+  P_SW1 |= 0x20;  //串口1脚位切换到P3.6、P3.7
   SCON = 0x50;    //8位数据,可变波特率，允许串口接收数据
   AUXR |= 0x01;		//串口1选择定时器2为波特率发生器
 	AUXR |= 0x04;		//定时器时钟1T模式
@@ -69,60 +70,27 @@ void serial_init()
 	tx_busy = false;
 }
 
-// // 写入一个字节到串口发送缓冲区。被主程序调用。
-// void serial_write(uint8_t _data) {
-//   // 计算下一个头指针，如果已经到达最大值，移到开始，形成环形
-//   uint8_t next_head = serial_tx_buffer_head + 1;
-//   if (next_head == TX_RING_BUFFER) { next_head = 0; }
+// 写入一个字节到串口发送缓冲区。被主程序调用。
+void serial_write(uint8_t _data) {
+  // 计算下一个头指针，如果已经到达最大值，移到开始，形成环形
+  uint8_t next_head = serial_tx_buffer_head + 1;
+  if (next_head == TX_RING_BUFFER) { next_head = 0; }
 
-//   // 等待，直到缓冲区有空间
-//   while (next_head == serial_tx_buffer_tail) {
-//     // 代办：重构st_prep_tx_buffer()调用，在长打印期间在这里执行。
-//     if (sys_rt_exec_state & EXEC_RESET) { return; } // 只检查终止防止死循环。
-//   }
+  // 等待，直到缓冲区有空间
+  while (next_head == serial_tx_buffer_tail) {
+    // 代办：重构st_prep_tx_buffer()调用，在长打印期间在这里执行。
+    if (sys_rt_exec_state & EXEC_RESET) { return; } // 只检查终止防止死循环。
+  }
 
-//   // 储存数据并向前移动头指针
-//   serial_tx_buffer[serial_tx_buffer_head] = _data;
-//   serial_tx_buffer_head = next_head;
-// 	// 如果发送队列不为空，启动发送
-//   if(!tx_busy){
-//     TI = 1;
-//     tx_busy = true;
-//   }
-// }
-
-void serial_write(unsigned char dat) {
-  IE2 &= ~0x80;   //EUSB = 0;
-        // UsbInBusy = 1;
-        usb_write_reg(INDEX, 1);
-        usb_write_reg(FIFO1, dat);
-        usb_write_reg(INCSR1, INIPRDY);
-        IE2 |= 0x80;    //EUSB = 1;
+  // 储存数据并向前移动头指针
+  serial_tx_buffer[serial_tx_buffer_head] = _data;
+  serial_tx_buffer_head = next_head;
+	// 如果发送队列不为空，启动发送
+  if(!tx_busy){
+    TI = 1;
+    tx_busy = true;
+  }
 }
-
-char putchar(char c) {
-  serial_write(c);
-  return c;
-}
-
-// 数据寄存器为空的中断处理
-void SERIAL_TX_ISR()
-{
-	uint8_t tail;
-  
-  // 由于环形队列尾指针中断和主程序都会使用，有可能导致数据读取时，指针已经发生了变化，
-  // 存在不稳定性，所以要用临时变量暂存，增加读取时的稳定性。
-  tail = serial_tx_buffer_tail; // 临时变量暂存 serial_tx_buffer_tail (为volatile优化)
-  // 从缓冲区发送一个字节到串口
-  SBUF = serial_tx_buffer[tail];
-
-  // 更新尾指针位置，如果已经到达顶端，返回初始位置，形成环形
-  tail++;
-  if (tail == TX_RING_BUFFER) { tail = 0; }
-
-  serial_tx_buffer_tail = tail;
-}
-
 
 // 获取串口接收缓冲区的第一个字节。被主程序调用。
 uint8_t serial_read()
@@ -141,11 +109,31 @@ uint8_t serial_read()
   }
 }
 
+// 数据寄存器为空的中断处理
+void SERIAL_TX_ISR()
+{
+  // 由于环形队列尾指针中断和主程序都会使用，有可能导致数据读取时，指针已经发生了变化，
+  // 存在不稳定性，所以要用临时变量暂存，增加读取时的稳定性。
+  uint8_t tail = serial_tx_buffer_tail; // 临时变量暂存 serial_tx_buffer_tail (为volatile优化)
+  
+  uint8_t dat = serial_tx_buffer[tail];
+  SBUF = dat; // 从缓冲区发送一个字节到串口
+  usb_write_reg(INDEX, 1);
+  usb_write_reg(FIFO1, dat); // 从缓冲区发送一个字节到USB
+  usb_write_reg(INCSR1, INIPRDY);
+
+  // 更新尾指针位置，如果已经到达顶端，返回初始位置，形成环形
+  tail++;
+  if (tail == TX_RING_BUFFER) { tail = 0; }
+
+  serial_tx_buffer_tail = tail;
+}
+
 // 串口数据接收中断处理
-void SERIAL_RX_ISR()
+void SERIAL_RX_ISR(_data)
 {
   // uint8_t _data = SBUF; // 从串口数据寄存器取出数据
-  uint8_t _data = usb_read_reg(FIFO1); // 从USB数据寄存器取出数据
+  // uint8_t _data = usb_read_reg(FIFO1); // 从USB数据寄存器取出数据
   uint8_t next_head; // 初始化下一个头指针
 
   // 直接从串行流中选取实时命令字符。这些字符不被传递到主缓冲区，但是它们设置了实时执行的系统状态标志位。
@@ -205,7 +193,7 @@ void serial_isr () interrupt UART1_VECTOR {
 	if(TI) {
 		TI = 0;
     // 环形队列不为空就处理
-    if(serial_tx_buffer_tail != serial_tx_buffer_head) { 
+    if(serial_get_tx_buffer_count()) { 
       SERIAL_TX_ISR();
     } else {
       tx_busy = false;
@@ -215,7 +203,7 @@ void serial_isr () interrupt UART1_VECTOR {
 
 	if(RI) {
 		RI = 0;
-		SERIAL_RX_ISR();
+		SERIAL_RX_ISR(SBUF);
 	}
 }
 
@@ -239,7 +227,6 @@ void usb_in_ep1()
     }
     if (csr & INUNDRUN)
     {
-      // SERIAL_TX_ISR();
       usb_write_reg(INCSR1, 0);
     }
 
@@ -265,7 +252,7 @@ void usb_out_ep1() // 接收数据处理
         cnt = usb_read_reg(OUTCOUNT1);
         while (cnt--)
         {
-          SERIAL_RX_ISR();
+          SERIAL_RX_ISR(usb_read_reg(FIFO1));
         }
         // 缓冲区容不下一个数据段时，标记从usb接收忙
         // if (RxWptr - RxRptr >= 256 - EP1OUT_SIZE)

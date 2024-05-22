@@ -33,7 +33,7 @@ int main(void)
 {
   P_SW2 |= 0x80;
   // 开机后初始化系统
-  // serial_init();   // 设置串口波特率和中断。
+  serial_init();   // 设置串口波特率和中断。
   usb_init();
   settings_init(); // 从EEPROM加载Grbl设置。
   stepper_init();  // 配置步进电机引脚和中断定时器。
