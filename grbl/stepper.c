@@ -310,6 +310,8 @@ void TIMER1_COMPA_vect() interrupt TMR1_VECTOR // CTC和COMPA中断可以产生�
   DIRECTION_PORT_DUAL = (DIRECTION_PORT_DUAL & ~DIRECTION_MASK_DUAL) | (st.dir_outbits_dual & DIRECTION_MASK_DUAL);
 #endif
 
+NOP(1);
+
 // 然后设置步进脉冲
 #ifdef STEP_PULSE_DELAY                                      // 延迟操作
   st.step_bits = (STEP_PORT & ~STEP_MASK) | st.step_outbits; // 存储_位以防止覆盖。
