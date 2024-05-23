@@ -58,6 +58,7 @@ uint8_t serial_get_tx_buffer_count()
 // 串口初始化
 void serial_init()
 {
+  P3M0 &= ~0xc0; P3M1 &= ~0xc0; 
   P_SW1 = (P_SW1 & ~0xc0) | 0x40;		//UART1/USART1: RxD(P3.6), TxD(P3.7)
   SCON = 0x50;    //8位数据,可变波特率，允许串口接收数据
   AUXR |= 0x01;		//串口1选择定时器2为波特率发生器
@@ -116,10 +117,14 @@ void SERIAL_TX_ISR()
   uint8_t tail = serial_tx_buffer_tail; // 临时变量暂存 serial_tx_buffer_tail (为volatile优化)
   
   uint8_t dat = serial_tx_buffer[tail];
-  SBUF = dat; // 从缓冲区发送一个字节到串口
+  
+  IE2 &= ~0x80;   //EUSB = 0;
   usb_write_reg(INDEX, 1);
   usb_write_reg(FIFO1, dat); // 从缓冲区发送一个字节到USB
   usb_write_reg(INCSR1, INIPRDY);
+  IE2 |= 0x80;    //EUSB = 1;
+
+  SBUF = dat; // 从缓冲区发送一个字节到串口
 
   // 更新尾指针位置，如果已经到达顶端，返回初始位置，形成环形
   tail++;
