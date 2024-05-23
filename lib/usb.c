@@ -15,7 +15,6 @@
 #include "usb_req_std.h"
 #include "usb_req_class.h"
 #include "usb_req_vendor.h"
-#include "util.h"
 
 uint8_t DeviceState;
 SETUP Setup;
@@ -23,6 +22,15 @@ EPSTATE Ep0State;
 uint8_t InEpState;
 uint8_t OutEpState;
 
+uint16_t reverse2(uint16_t w)
+{
+    uint16_t ret;
+    
+    ((uint8_t *)&ret)[0] = ((uint8_t *)&w)[1];
+    ((uint8_t *)&ret)[1] = ((uint8_t *)&w)[0];
+
+    return ret;
+}
 
 #ifdef EN_EP1IN
 void usb_in_ep1()

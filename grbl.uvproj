@@ -536,11 +536,6 @@
               <FileType>1</FileType>
               <FilePath>.\lib\usb_req_vendor.c</FilePath>
             </File>
-            <File>
-              <FileName>util.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\lib\util.c</FilePath>
-            </File>
           </Files>
         </Group>
       </Groups>
