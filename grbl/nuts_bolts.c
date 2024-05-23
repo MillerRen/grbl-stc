@@ -122,11 +122,27 @@ void delay_ms(unsigned int ms)
 {
 	unsigned int i;
 	do{
-		i = 24000000UL / 10000;
+		i = F_CPU / 10000;
 		while(--i);
 	}while(--ms);
 }
 
+void _delay_us_()	//@24.000MHz
+{
+	unsigned char data i;
+
+	i = 6;
+	while (--i);
+}
+
+void delay_us (uint32_t us) {
+  uint32_t i;
+  for (i = 0; i < us; i++)
+  {
+    _delay_us_();
+  }
+  
+}
 
 //延迟变量定义的微秒。_delay_us（）的编译器兼容性修复程序，它只接受未来编译器版本中的常量。
 //由于计数器在每次迭代中都会增加寄生时间，因此编写的代码可以更有效地执行更大的延迟。
