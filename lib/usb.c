@@ -43,7 +43,7 @@ void usb_in_ep1()
 }
 #endif
 #ifdef EN_EP2IN
-void usb_in_ep2() // ¶Ëµã2ÓÃÓÚATÃüÁî
+void usb_in_ep2() // ï¿½Ëµï¿½2ï¿½ï¿½ï¿½ï¿½ATï¿½ï¿½ï¿½ï¿½
 {
     unsigned char csr;
 
@@ -61,7 +61,7 @@ void usb_in_ep2() // ¶Ëµã2ÓÃÓÚATÃüÁî
 #endif
 
 #ifdef EN_EP1OUT
-void usb_out_ep1() // ½ÓÊÕÊý¾Ý´¦Àí
+void usb_out_ep1() // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý´ï¿½ï¿½ï¿½
 {
     uint8_t csr;
     uint8_t cnt;
@@ -136,8 +136,8 @@ void usb_init()
 
     usb_write_reg(FADDR, 0x00);
     usb_write_reg(POWER, 0x08);
-    usb_write_reg(INTRIN1E, 0x3);  // USB¶ËµãINÖÐ¶ÏÊ¹ÄÜ
-    usb_write_reg(INTROUT1E, 0x3); // USB¶ËµãOUTÖÐ¶ÏÊ¹ÄÜ
+    usb_write_reg(INTRIN1E, 0x3);  // USBï¿½Ëµï¿½INï¿½Ð¶ï¿½Ê¹ï¿½ï¿½
+    usb_write_reg(INTROUT1E, 0x3); // USBï¿½Ëµï¿½OUTï¿½Ð¶ï¿½Ê¹ï¿½ï¿½
     usb_write_reg(INTRUSBE, 0x07);
     usb_write_reg(POWER, 0x00);
 
@@ -169,7 +169,7 @@ uint8_t usb_read_fifo(uint8_t fifo, uint8_t *pdat)
     uint8_t cnt;
     uint8_t ret;
 
-    ret = cnt = usb_read_reg(COUNT0); // COUNT0ºÍOUTCOUNT1µØÖ·ÏàÍ¬
+    ret = cnt = usb_read_reg(COUNT0); // COUNT0ï¿½ï¿½OUTCOUNT1ï¿½ï¿½Ö·ï¿½ï¿½Í¬
     while (cnt--)
     {
     	*pdat++ = usb_read_reg(fifo);
@@ -226,12 +226,12 @@ void usb_setup()
 
     if (csr & STSTL)
     {
-        usb_write_reg(CSR0, csr & ~STSTL);  //?????§Õ 0 ??????¦Ë
+        usb_write_reg(CSR0, csr & ~STSTL);  //?????ï¿½ï¿½ 0 ??????ï¿½ï¿½
         Ep0State.bState = EPSTATE_IDLE;
     }
     if (csr & SUEND)
     {
-        usb_write_reg(CSR0, csr | SSUEND);  //?? SSUEND §Õ 1 ??? SUEND ???¦Ë
+        usb_write_reg(CSR0, csr | SSUEND);  //?? SSUEND ï¿½ï¿½ 1 ??? SUEND ???ï¿½ï¿½
     }
 
     switch (Ep0State.bState)

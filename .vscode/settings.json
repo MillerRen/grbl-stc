@@ -3,14 +3,15 @@
         "stdlib.h": "c",
         "compat.h": "c",
         "stdio.h": "c",
-        "STDIO.H": "cpp",
-        "PUTCHAR.C": "cpp",
+        "STDIO.H": "c",
+        "PUTCHAR.C": "c",
         "grbl.h": "c",
         "eeprom.h": "c",
         "stc8h.h": "c",
-        "STC8H.H": "cpp",
+        "STC8H.H": "c",
         "intrins.h": "c",
         "stdint.h": "c",
-        "usb.h": "c"
+        "usb.h": "c",
+        "INTRINS.H": "c"
     }
 }

@@ -86,6 +86,8 @@ void usb_ctrl_in();
 void usb_ctrl_out();
 void usb_bulk_intr_in(uint8_t *pData, uint8_t bSize, uint8_t ep);
 uint8_t usb_bulk_intr_out(uint8_t *pData, uint8_t ep);
+bool usb_bulk_intr_in_busy();
+bool usb_bulk_intr_out_ready();
 
 void usb_resume();
 void usb_reset();
