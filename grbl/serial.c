@@ -118,13 +118,14 @@ void SERIAL_TX_ISR()
   
   uint8_t dat = serial_tx_buffer[tail];
   
-  IE2 &= ~0x80;   //EUSB = 0;
-  usb_write_reg(INDEX, 1);
-  usb_write_reg(FIFO1, dat); // 从缓冲区发送一个字节到USB
-  usb_write_reg(INCSR1, INIPRDY);
-  IE2 |= 0x80;    //EUSB = 1;
-  while(usb_bulk_intr_in_busy());
-
+  if (DeviceState == DEVSTATE_CONFIGURED){
+    IE2 &= ~0x80;   //EUSB = 0;
+    usb_write_reg(INDEX, 1);
+    usb_write_reg(FIFO1, dat); // 从缓冲区发送一个字节到USB
+    usb_write_reg(INCSR1, INIPRDY);
+    IE2 |= 0x80;    //EUSB = 1;
+    while(usb_bulk_intr_in_busy());
+  }
   SBUF = dat; // 从缓冲区发送一个字节到串口
 
   // 更新尾指针位置，如果已经到达顶端，返回初始位置，形成环形
