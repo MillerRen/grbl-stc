@@ -31,12 +31,12 @@
 #define SERIAL_UDRE USART_UDRE_vect
 
 // 定义步进脉冲输出引脚。注意：所有步进位引脚必须位于同一端口上。
-#define STEP_DDR P4M0
-#define STEP_DDR_1 P4M1
-#define STEP_PORT P4
-#define X_STEP_BIT 2                                                          // Uno数字引脚2
-#define Y_STEP_BIT 3                                                          // Uno数字管脚3
-#define Z_STEP_BIT 4                                                          // Uno数字引脚4
+#define STEP_DDR P2M0
+#define STEP_DDR_1 P2M1
+#define STEP_PORT P2
+#define X_STEP_BIT 4                                                          // Uno数字引脚2
+#define Y_STEP_BIT 5                                                          // Uno数字管脚3
+#define Z_STEP_BIT 6                                                          // Uno数字引脚4
 #define STEP_MASK ((1 << X_STEP_BIT) | (1 << Y_STEP_BIT) | (1 << Z_STEP_BIT)) // 所有步进位
 
 // 定义步进方向输出引脚。注意：所有方向引脚必须位于同一端口上。
@@ -49,9 +49,9 @@
 #define DIRECTION_MASK ((1 << X_DIRECTION_BIT) | (1 << Y_DIRECTION_BIT) | (1 << Z_DIRECTION_BIT)) // 所有方向位
 
 // 定义步进驱动器启用/禁用输出引脚。
-#define STEPPERS_DISABLE_DDR P5M0
-#define STEPPERS_DISABLE_DDR_1 P5M1
-#define STEPPERS_DISABLE_PORT P5
+#define STEPPERS_DISABLE_DDR P2M0
+#define STEPPERS_DISABLE_DDR_1 P2M1
+#define STEPPERS_DISABLE_PORT P2
 #define STEPPERS_DISABLE_BIT 0 // 一个数字管脚8
 #define STEPPERS_DISABLE_MASK (1 << STEPPERS_DISABLE_BIT)
 
