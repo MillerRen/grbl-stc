@@ -59,7 +59,7 @@
 // 注意：所有限制位引脚必须位于同一端口上，但不能位于具有其他输入引脚（控制）的端口上。
 #define LIMIT_DDR   P0M0
 #define LIMIT_DDR_1 P0M1
-#define LIMIT_PIN   P0INTF
+#define LIMIT_PIN   P0
 #define LIMIT_PULL_UP P0PU
 #define LIMIT_PULL_DOWN P0PD
 #define X_LIMIT_BIT 1 // Uno数字管脚9
@@ -85,21 +85,23 @@
 
 // 定义用户控制（循环启动、复位、进给保持）输入引脚。
 // 注意：所有控制管脚必须位于同一端口上，而不是位于具有其他输入管脚的端口上（限位）。
-#define CONTROL_DDR P3M0
-#define CONTROL_DDR_1 P3M0
-#define CONTROL_PIN P3INTF
-#define CONTROL_PORT P3
+#define CONTROL_DDR             P3M0
+#define CONTROL_DDR_1           P3M0
+#define CONTROL_PIN             P3
+#define CONTROL_PORT            P3
 #define CONTROL_RESET_BIT       2 // Uno模拟引脚0
 #define CONTROL_FEED_HOLD_BIT   3 // Uno模拟引脚1
 #define CONTROL_CYCLE_START_BIT 4 // Uno模拟引脚2
 #define CONTROL_SAFETY_DOOR_BIT 5 // Uno模拟引脚1注：安全门与馈电保持共用。由配置定义启用。
-#define CONTROL_INT P3INTE         // 引脚更改中断启用引脚
-#define CONTROL_INTF P3INTF         // 引脚更改中断启用引脚
-#define CONTROL_INT_vect P3INT_VECTOR
-#define CONTROL_PCMSK P3IM0 // 引脚改变中断寄存器
-#define CONTROL_PCMSK_1 P3IM1 // 引脚改变中断寄存器
-#define CONTROL_MASK ((1 << CONTROL_RESET_BIT) | (1 << CONTROL_FEED_HOLD_BIT) | (1 << CONTROL_CYCLE_START_BIT) | (1 << CONTROL_SAFETY_DOOR_BIT))
-#define CONTROL_INVERT_MASK CONTROL_MASK // 可重新定义为仅反转某些控制引脚。
+#define CONTROL_PULL_UP         P3PU
+#define CONTROL_PULL_DOWN       P3PD
+#define CONTROL_INT             P3INTE         // 引脚更改中断启用引脚
+#define CONTROL_INTF            P3INTF         // 引脚更改中断启用引脚
+#define CONTROL_INT_vect        P3INT_VECTOR
+#define CONTROL_PCMSK           P3IM0 // 引脚改变中断寄存器
+#define CONTROL_PCMSK_1         P3IM1 // 引脚改变中断寄存器
+#define CONTROL_MASK            ((1 << CONTROL_RESET_BIT) | (1 << CONTROL_FEED_HOLD_BIT) | (1 << CONTROL_CYCLE_START_BIT) | (1 << CONTROL_SAFETY_DOOR_BIT))
+#define CONTROL_INVERT_MASK     CONTROL_MASK // 可重新定义为仅反转某些控制引脚。
 
 
 

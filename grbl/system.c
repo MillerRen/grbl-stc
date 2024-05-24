@@ -20,7 +20,10 @@ void system_init()
   CONTROL_DDR &= ~(CONTROL_MASK); //配置为输入引脚
   CONTROL_DDR_1 &= ~(CONTROL_MASK); //配置为输入引脚
   #ifdef ENABLE_CONTROL_PIN_PULL_UP
-    CONTROL_PORT |= CONTROL_MASK;   //启用内部上拉电阻器。正常高位运行。
+    CONTROL_PULL_UP |= CONTROL_MASK;   //启用内部上拉电阻器。正常高位运行。
+  #endif
+  #ifdef ENABLE_CONTROL_PIN_PULL_DOWN
+    CONTROL_PULL_DOWN |= CONTROL_MASK;   //启用内部上拉电阻器。正常高位运行。
   #endif
   CONTROL_PCMSK   |= CONTROL_MASK;  //启用管脚更改中断的特定管脚
   CONTROL_PCMSK_1 |= CONTROL_MASK;  //启用管脚更改中断的特定管脚

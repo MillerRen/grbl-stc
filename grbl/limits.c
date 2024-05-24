@@ -37,11 +37,11 @@ void limits_init()
   LIMIT_DDR_1 |= (LIMIT_MASK); //设置为开漏输入
 
   #ifdef ENABLE_LIMIT_PIN_PULL_UP
-    LIMIT_PULL_UP |= (LIMIT_MASK);  //启用内部上拉电阻器。正常高位运行。
+    LIMIT_PULL_UP |= (LIMIT_MASK);  //启用内部上拉电阻器。正常高电平运行。
   #endif
 
   #ifdef ENABLE_LIMIT_PIN_PULL_DOWN
-    LIMIT_PULL_DOWN |= (LIMIT_MASK);  //启用内部上拉电阻器。正常高位运行。
+    LIMIT_PULL_DOWN |= (LIMIT_MASK);  //启用内部上拉电阻器。正常低电平运行。
   #endif
 
   if (bit_istrue(settings.flags,BITFLAG_HARD_LIMIT_ENABLE)) {
