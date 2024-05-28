@@ -3,8 +3,8 @@
         {
             "name": "Target 1",
             "includePath": [
-                "d:\\STC\\grbl_stc8h8k64u\\grbl",
-                "d:\\STC\\grbl_stc8h8k64u\\lib",
+                "d:\\source\\grbl_stc8h8k64u\\grbl",
+                "d:\\source\\grbl_stc8h8k64u\\lib",
                 "C:\\Keil_v5\\C51\\INC"
             ],
             "defines": [

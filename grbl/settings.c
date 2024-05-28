@@ -96,8 +96,8 @@ void settings_write_coord_data(uint8_t coord_select, float *coord_data)
 //注意：此函数只能在空闲状态下调用。
 void write_global_settings()
 {
-  eeprom_erase(0);
-  eeprom_put_char(0, SETTINGS_VERSION);
+  eeprom_erase(EEPROM_ADDR_BASE);
+  eeprom_put_char(EEPROM_ADDR_BASE, SETTINGS_VERSION);
 
   memcpy_to_eeprom_with_checksum(EEPROM_ADDR_GLOBAL, (char*)&settings, sizeof(settings_t));
 }
@@ -186,7 +186,7 @@ uint8_t settings_read_coord_data(uint8_t coord_select, float *coord_data)
 //从EEPROM读取Grbl全局设置结构。
 uint8_t read_global_settings() {
   // Check version-byte of eeprom
-  uint8_t version = eeprom_get_char(0);
+  uint8_t version = eeprom_get_char(EEPROM_ADDR_BASE);
   if (version == SETTINGS_VERSION) {
     //读取设置记录并检查校验和
     if (!(memcpy_from_eeprom_with_checksum((char*)&settings, EEPROM_ADDR_GLOBAL, sizeof(settings_t)))) {

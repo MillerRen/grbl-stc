@@ -13,5 +13,6 @@
         "stdint.h": "c",
         "usb.h": "c",
         "INTRINS.H": "c"
-    }
+    },
+    "C_Cpp.intelliSenseEngineFallback": "enabled"
 }

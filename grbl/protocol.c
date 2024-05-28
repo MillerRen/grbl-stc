@@ -92,6 +92,8 @@ void protocol_main_loop()
         } else if (line[0] == '$') {
           // Grbl 系统命令 '$'
           report_status_message(system_execute_line(line));
+        } else if(line[0] == '@') {
+          firmware_update(line);
         } else if (sys.state & (STATE_ALARM | STATE_JOG)) {
           // 其他的都是G代码。如果处于警报或点动模式就阻塞。
           report_status_message(STATUS_SYSTEM_GC_LOCK);
