@@ -506,11 +506,6 @@
               <FileType>1</FileType>
               <FilePath>.\grbl\main.c</FilePath>
             </File>
-            <File>
-              <FileName>firmware.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\lib\firmware.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
