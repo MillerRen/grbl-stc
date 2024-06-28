@@ -5,6 +5,9 @@ Grbl是一个非常优秀的CNC固件，在业余CNC爱好者中被广泛使用�
 _点击 `Release` 页签下载编译好的 `.hex` 文件 或 [点击这里](https://github.com/MillerRen/grbl-stc/releases)_
 ***
 
+## 使用说明
+在grbl的基础上添加了USB支持，由于P3.0和P3.1被占用，串口引脚重映射到P3.6、P3.7。USB和串口公用一个缓冲器。
+
 * [许可证](https://github.com/gnea/grbl/wiki/Licensing): Grbl是自由软件, 在 GPLv3 许可证下发布。
 
 * 更多信息或帮助, 查看我们的WiKi **[WiKi页面!](https://github.com/MillerRen/grbl/wiki)** 如果上面的信息过时了, 请编辑它保持最新并和我们沟通! 谢谢!
