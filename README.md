@@ -6,7 +6,7 @@ _点击 `Release` 页签下载编译好的 `.hex` 文件 或 [点击这里](http
 ***
 
 ## 使用说明
-在grbl的基础上添加了USB支持，由于P3.0和P3.1被占用，串口引脚重映射到P3.6、P3.7。USB和串口公用一个缓冲器。
+在grbl的基础上添加了USB支持，由于P3.0和P3.1被占用，串口引脚重映射到P3.6、P3.7，USB和串口共用一个缓冲器。默认典型器件是STC的STC8H8K64U,LQFP32封装。引脚定义请参见源码配置文件`config.h`。
 
 * [许可证](https://github.com/gnea/grbl/wiki/Licensing): Grbl是自由软件, 在 GPLv3 许可证下发布。
 
