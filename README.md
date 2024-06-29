@@ -10,6 +10,9 @@ _点击 `Release` 页签下载编译好的 `.hex` 文件 或 [点击这里](http
 
  更多信息或帮助, 查看我们的WiKi **[WiKi页面!](https://github.com/MillerRen/grbl/wiki)** 如果上面的信息过时了, 请编辑它保持最新并和我们沟通! 谢谢!
 
+## 构建
+使用keil c51打开grbl.uvproj构建即可。
+
 ##  许可证
 [许可证](https://github.com/gnea/grbl/wiki/Licensing): Grbl是自由软件, 在 GPLv3 许可证下发布。
 
