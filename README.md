@@ -16,6 +16,7 @@ _点击 `Release` 页签下载编译好的 `.hex` 文件 或 [点击这里](http
 - 支持USB    √
 - 支持舵机
 - 支持多轴
+- 控制板
 
 ## 支持及赞助
 <img src="./images/donate.png">   
