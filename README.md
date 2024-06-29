@@ -12,6 +12,11 @@ _点击 `Release` 页签下载编译好的 `.hex` 文件 或 [点击这里](http
 
 * 更多信息或帮助, 查看我们的WiKi **[WiKi页面!](https://github.com/MillerRen/grbl/wiki)** 如果上面的信息过时了, 请编辑它保持最新并和我们沟通! 谢谢!
 
+## 路线图
+- 支持USB    √
+- 支持舵机
+- 支持多轴
+
 ## 支持及赞助
 <img src="./images/donate.png">   
 
