@@ -8,7 +8,7 @@ _点击 `Release` 页签下载编译好的 `.hex` 文件 或 [点击这里](http
 ## 使用说明
  在grbl的基础上添加了USB支持，由于P3.0和P3.1被占用，串口引脚重映射到P3.6、P3.7，USB和串口共用一个缓冲器。默认典型器件是STC的STC8H8K64U,LQFP32封装。引脚定义请参见源码配置文件`config.h`及`cpu_map.h`。
 
- 更多信息或帮助, 查看我们的WiKi **[WiKi页面!](https://github.com/MillerRen/grbl/wiki)** 如果上面的信息过时了, 请编辑它保持最新并和我们沟通! 谢谢!
+ 这个项目是我的一系列grbl移植文章的成果，有兴趣的可以参考：[https://www.bilibili.com/read/readlist/rl408478](https://www.bilibili.com/read/readlist/rl408478)
 
 ## 构建
 使用keil c51打开grbl.uvproj构建即可。
