@@ -40,8 +40,10 @@
 /** The constant \a 1/sqrt(2).	*/
 #define M_SQRT1_2	0.70710678118654752440	/* 1/sqrt(2) */
 
-#define trunc floor
-#define lround floor
-#define round floor
+#include <math.h>
+
+#define trunc(x)   ((double)((x) < 0 ? ceil(x) : floor(x)))
+#define round(x)   ((double)((x) < 0 ? ceil((x) - 0.5f) : floor((x) + 0.5f)))
+#define lround(x)  ((long)((x) < 0 ? ((x) - 0.5f) : ((x) + 0.5f)))
 
 #endif
