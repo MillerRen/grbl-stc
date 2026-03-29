@@ -61,7 +61,7 @@ code const settings_t defaults = {
 //将启动行存储到EEPROM中的方法
 void settings_store_startup_line(uint8_t n, char *line)
 {
-	uint32_t addr = n*0+EEPROM_ADDR_STARTUP_BLOCK;
+	uint32_t addr = n*LINE_BUFFER_SIZE+EEPROM_ADDR_STARTUP_BLOCK;
   #ifdef FORCE_BUFFER_SYNC_DURING_EEPROM_WRITE
     protocol_buffer_synchronize(); //启动行可能包含运动并正在执行。
   #endif
@@ -74,7 +74,6 @@ void settings_store_startup_line(uint8_t n, char *line)
 //注意：此函数只能在空闲状态下调用。
 void settings_store_build_info(char *line)
 {
-  eeprom_erase(EEPROM_ADDR_BUILD_INFO);
   //生成信息只能在状态为空闲时存储。
   memcpy_to_eeprom_with_checksum(EEPROM_ADDR_BUILD_INFO,(char*)line, LINE_BUFFER_SIZE);
 }
@@ -96,7 +95,6 @@ void settings_write_coord_data(uint8_t coord_select, float *coord_data)
 //注意：此函数只能在空闲状态下调用。
 void write_global_settings()
 {
-  eeprom_erase(EEPROM_ADDR_BASE);
   eeprom_put_char(EEPROM_ADDR_BASE, SETTINGS_VERSION);
 
   memcpy_to_eeprom_with_checksum(EEPROM_ADDR_GLOBAL, (char*)&settings, sizeof(settings_t));
@@ -114,12 +112,10 @@ void settings_restore(uint8_t restore_flag) {
     uint8_t idx;
     float coord_data[N_AXIS];
     memset(&coord_data, 0, sizeof(coord_data));
-    eeprom_erase(EEPROM_ADDR_PARAMETERS);
     for (idx=0; idx <= SETTING_INDEX_NCOORD; idx++) { settings_write_coord_data(idx, coord_data); }
   }
 
   if (restore_flag & SETTINGS_RESTORE_STARTUP_LINES) {
-    eeprom_erase(EEPROM_ADDR_STARTUP_BLOCK);
     #if N_STARTUP_LINE > 0
       eeprom_put_char(EEPROM_ADDR_STARTUP_BLOCK, 0);
       eeprom_put_char(EEPROM_ADDR_STARTUP_BLOCK+1, 0); // Checksum
@@ -131,7 +127,6 @@ void settings_restore(uint8_t restore_flag) {
   }
 
   if (restore_flag & SETTINGS_RESTORE_BUILD_INFO) {
-    eeprom_erase(EEPROM_ADDR_BUILD_INFO);
     eeprom_put_char(EEPROM_ADDR_BUILD_INFO , 0);
     eeprom_put_char(EEPROM_ADDR_BUILD_INFO+1 , 0); //校验和
   }
@@ -141,7 +136,7 @@ void settings_restore(uint8_t restore_flag) {
 //从EEPROM读取启动行。更新指向的线字符串数据。
 uint8_t settings_read_startup_line(uint8_t n, char *line)
 {
-  uint32_t addr = n*0+EEPROM_ADDR_STARTUP_BLOCK;
+  uint32_t addr = n*LINE_BUFFER_SIZE+EEPROM_ADDR_STARTUP_BLOCK;
   
   if (!(memcpy_from_eeprom_with_checksum((char*)line, addr, LINE_BUFFER_SIZE))) {
     //使用默认值重置行
