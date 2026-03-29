@@ -466,7 +466,9 @@ void report_realtime_status()
 	float wco[N_AXIS];
   float print_position[N_AXIS];
 	
+  ATOMIC_BLOCK_START
 	memcpy(current_position,sys_position,sizeof(sys_position));
+  ATOMIC_BLOCK_END
   system_convert_array_steps_to_mpos(print_position,current_position);
 	
 	

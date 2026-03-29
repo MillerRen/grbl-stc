@@ -19,13 +19,13 @@
 system_t sys;
 int32_t sys_position[N_AXIS];      // 用步数表示的实时机器（如归位）位置向量。
 int32_t sys_probe_position[N_AXIS]; // 探针在机器坐标的最后位置和步数。
-volatile uint8_t sys_probe_state;   // 对刀状态值。用于在步进中断中配合对刀周期。
-volatile uint8_t sys_rt_exec_state;   // 用于状态管理的全局实时执行器比特位标志位。 请参阅执行比特位掩码。
-volatile uint8_t sys_rt_exec_alarm;   // 用于设置一系列警告的全局实时执行器比特位标志位变量。
-volatile uint8_t sys_rt_exec_motion_override; // 用于基于运动的覆盖的全局执行器位标志位变量。
-volatile uint8_t sys_rt_exec_accessory_override; // 用于主轴/冷却覆盖的全局实时执行器比特位标志位变量。
+volatile data uint8_t sys_probe_state;   // 对刀状态值。用于在步进中断中配合对刀周期。
+volatile data uint8_t sys_rt_exec_state;   // 用于状态管理的全局实时执行器比特位标志位。 请参阅执行比特位掩码。
+volatile data uint8_t sys_rt_exec_alarm;   // 用于设置一系列警告的全局实时执行器比特位标志位变量。
+volatile data uint8_t sys_rt_exec_motion_override; // 用于基于运动的覆盖的全局执行器位标志位变量。
+volatile data uint8_t sys_rt_exec_accessory_override; // 用于主轴/冷却覆盖的全局实时执行器比特位标志位变量。
 #ifdef DEBUG
-  volatile uint8_t sys_rt_exec_debug;
+  volatile data uint8_t sys_rt_exec_debug;
 #endif
 
 

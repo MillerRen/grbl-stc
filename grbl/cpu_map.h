@@ -19,9 +19,9 @@
 #define sei() EA = 1
 #define cli() EA = 0
 
-// SC8H (8051) 安全的原子操作宏，用于在中断内保存和还原EA状态，防止中断嵌套导致爆栈
-#define ATOMIC_BLOCK_START { unsigned char _ea_save = EA; EA = 0;
-#define ATOMIC_BLOCK_END   EA = _ea_save; }
+// SC8H (8051) 安全的原子操作宏，使用 F0 (PSW^5) 标志位来暂存 EA 状态，比变量更高效
+#define ATOMIC_BLOCK_START { F0 = EA; EA = 0;
+#define ATOMIC_BLOCK_END   EA = F0; }
 
 #define PSTR(s) ((const char code *)(s))
 

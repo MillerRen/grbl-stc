@@ -146,15 +146,15 @@ extern system_t sys;
 extern int32_t sys_position[N_AXIS]; // 实时机器（比如原点）矢量位置，以步为单位。
 extern int32_t sys_probe_position[N_AXIS];//机器坐标和步骤中的最后一个探针位置。
 
-extern volatile uint8_t sys_probe_state;//探测状态值。用于与步进式ISR协调探测周期。
-extern volatile uint8_t sys_rt_exec_state;//用于状态管理的全局实时执行器位标志变量。请参阅EXEC位掩码。
-extern volatile uint8_t sys_rt_exec_alarm;//全局实时执行器bitflag变量，用于设置各种报警。
-extern volatile uint8_t sys_rt_exec_motion_override;//基于运动的覆盖的全局实时执行器位标志变量。
-extern volatile uint8_t sys_rt_exec_accessory_override;//主轴/冷却液覆盖的全局实时执行器位标志变量。
+extern volatile data uint8_t sys_probe_state;//探测状态值。用于与步进式ISR协调探测周期。
+extern volatile data uint8_t sys_rt_exec_state;//用于状态管理的全局实时执行器位标志变量。请参阅EXEC位掩码。
+extern volatile data uint8_t sys_rt_exec_alarm;//全局实时执行器bitflag变量，用于设置各种报警。
+extern volatile data uint8_t sys_rt_exec_motion_override;//基于运动的覆盖的全局实时执行器位标志变量。
+extern volatile data uint8_t sys_rt_exec_accessory_override;//主轴/冷却液覆盖的全局实时执行器位标志变量。
 
 #ifdef DEBUG
   #define EXEC_DEBUG_REPORT  bit_mask(0)
-  extern volatile uint8_t sys_rt_exec_debug;
+  extern volatile data uint8_t sys_rt_exec_debug;
 #endif
 
 //初始化串行协议
