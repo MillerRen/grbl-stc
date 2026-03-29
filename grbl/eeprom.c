@@ -32,15 +32,34 @@ void eeprom_put_char (uint16_t addr, unsigned char dat) {
     uint16_t sector_base = addr & 0xFE00; // 获取512字节扇区对齐基址
     uint16_t offset = addr & 0x01FF;      // 获取扇区内偏移
     uint16_t i;
+    unsigned char old_dat;
+
+    old_dat = eeprom_get_char(addr);
+
+    // 检查是否完全一致，避免徒劳写擦除
+    if (old_dat == dat) {
+        return; 
+    }
+    
+    // STC Flash 特性：如果所有需要改变的位都是从 1 变成 0，则可以直接写入，无需擦除。
+    // 即：旧数据和新数据按位与，若等于新数据，说明新数据中的1原本也是1，只是把部分1变成了0。
+    if ((old_dat & dat) == dat) {
+        IAP_ENABLE();
+        IAP_WRITE();
+        IAP_ADDRL = addr & 0xFF;
+        IAP_ADDRH = addr >> 8;
+        IAP_DATA = dat;
+        IAP_TRIG();
+        NOP(4);
+        IAP_DISABLE();
+        return;
+    }
+
+    // 否则，必须擦除整个扇区并重写
 
     // 1. 将整个扇区拉入 RAM
     for (i = 0; i < 512; i++) {
         sector_buf[i] = eeprom_get_char(sector_base + i);
-    }
-    
-    // 检查是否需要更新，避免徒劳写擦除
-    if (sector_buf[offset] == dat) {
-        return; 
     }
     
     // 2. 在 RAM 中修改单字节
@@ -80,24 +99,68 @@ void memcpy_to_eeprom_with_checksum (uint16_t destination, char *source, uint16_
     uint16_t sector_base = destination & 0xFE00;
     uint16_t offset = destination & 0x01FF;
     uint16_t i;
+    uint8_t requires_erase = 0;
 
     // 1. 获取整个目标扇区的快照
     for (i = 0; i < 512; i++) {
         sector_buf[i] = eeprom_get_char(sector_base + i);
     }
     
-    // 2. 将传入数组和校验和覆盖到快照内存中对应的映射处
+    // 2. 分析是否需要擦除，并计算校验和
     for (i = 0; i < size; i++) {
         check_sum = (check_sum << 1) | (check_sum >> 7);
         check_sum += source[i];
+        
+        if (sector_buf[offset + i] != source[i]) {
+            // 如果存在把 0 改写为 1 的行为，则必须擦除
+            if ((sector_buf[offset + i] & source[i]) != source[i]) {
+                requires_erase = 1;
+            }
+        }
+    }
+    
+    // 验证校验和字节是否也需要擦除
+    if (sector_buf[offset + size] != check_sum) {
+        if ((sector_buf[offset + size] & check_sum) != check_sum) {
+            requires_erase = 1;
+        }
+    }
+
+    if (!requires_erase) {
+        // 如果不需要擦除（目标区域是 0xFF 或者满足 1->0 转变），直接差异化增量写入
+        IAP_ENABLE();
+        for (i = 0; i < size; i++) {
+            if (sector_buf[offset + i] != source[i]) {
+                IAP_WRITE();
+                IAP_ADDRL = (destination + i) & 0xFF;
+                IAP_ADDRH = (destination + i) >> 8;
+                IAP_DATA = source[i];
+                IAP_TRIG();
+                NOP(4);
+            }
+        }
+        if (sector_buf[offset + size] != check_sum) {
+            IAP_WRITE();
+            IAP_ADDRL = (destination + size) & 0xFF;
+            IAP_ADDRH = (destination + size) >> 8;
+            IAP_DATA = check_sum;
+            IAP_TRIG();
+            NOP(4);
+        }
+        IAP_DISABLE();
+        return; // 直接返回，省去了几毫秒的擦除和回写时间
+    }
+
+    // 3. 将传入数组和校验和覆盖到快照内存中对应的映射处
+    for (i = 0; i < size; i++) {
         sector_buf[offset + i] = source[i];
     }
     sector_buf[offset + size] = check_sum;
 
-    // 3. 抹除目标物理扇区
+    // 4. 抹除目标物理扇区
     eeprom_erase(sector_base);
     
-    // 4. 将拼接完成的新扇区影像整块写回
+    // 5. 将拼接完成的新扇区影像整块写回
     IAP_ENABLE();
     for (i = 0; i < 512; i++) {
         if (sector_buf[i] != 0xFF) {
