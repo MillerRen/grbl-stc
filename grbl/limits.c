@@ -33,8 +33,8 @@
 
 void limits_init()
 {  
-  LIMIT_DDR   |= (LIMIT_MASK); //设置为开漏输入
-  LIMIT_DDR_1 |= (LIMIT_MASK); //设置为开漏输入
+  LIMIT_DDR   &= ~(LIMIT_MASK); // M0=0
+  LIMIT_DDR_1 |=  (LIMIT_MASK); // M1=1, 设置为高阻态输入模式
 
   #ifdef ENABLE_LIMIT_PIN_PULL_UP
     LIMIT_PULL_UP |= (LIMIT_MASK);  //启用内部上拉电阻器。正常高电平运行。

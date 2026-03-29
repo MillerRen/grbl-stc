@@ -17,8 +17,8 @@
 
 void system_init()
 {
-  CONTROL_DDR &= ~(CONTROL_MASK); //配置为输入引脚
-  CONTROL_DDR_1 &= ~(CONTROL_MASK); //配置为输入引脚
+  CONTROL_DDR &= ~(CONTROL_MASK); // M0=0
+  CONTROL_DDR_1 |= (CONTROL_MASK); // M1=1, 配置为高阻态输入模式
   #ifdef ENABLE_CONTROL_PIN_PULL_UP
     CONTROL_PULL_UP |= CONTROL_MASK;   //启用内部上拉电阻器。正常高位运行。
   #endif

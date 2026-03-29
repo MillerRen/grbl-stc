@@ -83,6 +83,7 @@
 #define PROBE_DDR_1 P0M1
 #define PROBE_PIN P0
 #define PROBE_PORT P0
+#define PROBE_PULL_UP P0PU
 #define PROBE_BIT 0 // Uno模拟引脚5
 #define PROBE_MASK (1 << PROBE_BIT)
 
