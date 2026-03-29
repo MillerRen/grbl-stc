@@ -119,16 +119,16 @@ void spindle_stop()
 
 
 #ifdef VARIABLE_SPINDLE
-  //设置主轴速度PWM输出和启用引脚（如果配置）。由spindle_set_state（）和步进ISR调用。保持小规模和高效率的运行。
+  // 设置主轴速度PWM输出和启用引脚（如果配置）。由spindle_set_state()和步进ISR调用。保持小规模和高效率的运行。
   void spindle_set_speed(uint16_t pwm_value)
   {
-       PWMA_CCR1H = pwm_value >> 8; //设置PWM输出电平。
-       PWMA_CCR1L = pwm_value; //设置PWM输出电平。
+       PWMA_CCR1H = pwm_value >> 8; // 设置PWM高八位
+       PWMA_CCR1L = pwm_value;      // 设置PWM低八位
     #ifdef SPINDLE_ENABLE_OFF_WITH_ZERO_SPEED
       if (pwm_value == SPINDLE_PWM_OFF_VALUE) {
         spindle_stop();
       } else {
-        SPINDLE_TCCRA_REGISTER |= (1<<SPINDLE_COMB_BIT); //确保PWM输出已启用。
+        PWMA_ENO |= (1<<SPINDLE_PWM_BIT); // 确保STC8原生PWM输出已启用
         #ifdef INVERT_SPINDLE_ENABLE_PIN
           SPINDLE_ENABLE_PORT &= ~(1<<SPINDLE_ENABLE_BIT);
         #else
@@ -137,9 +137,9 @@ void spindle_stop()
       }
     #else
       if (pwm_value == SPINDLE_PWM_OFF_VALUE) {
-        PWMA_ENO &= ~(1<<SPINDLE_PWM_BIT); //禁用PWM。输出电压为零。
+        PWMA_ENO &= ~(1<<SPINDLE_PWM_BIT); // 禁用PWM硬件输出通道，电平为0。
       } else {
-        PWMA_ENO |= (1<<SPINDLE_PWM_BIT); //确保PWM输出已启用。
+        PWMA_ENO |= (1<<SPINDLE_PWM_BIT);  // 确保PWM硬件输出已启用。
       }
     #endif 
   }
