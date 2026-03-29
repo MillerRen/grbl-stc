@@ -21,10 +21,12 @@ uint8_t serial_rx_buffer[RX_RING_BUFFER]; // 定义串口接收环形队列
 data uint8_t serial_rx_buffer_head = 0; // 定义串口接收环形队列头指针
 data volatile uint8_t serial_rx_buffer_tail = 0; // 定义串口接收环形队列尾指针
 
-uint8_t serial_tx_buffer[TX_RING_BUFFER]; // 定义串口发送环形队列
-data uint8_t serial_tx_buffer_head = 0; // 定义串口发送环形队列头指针
-data volatile uint8_t serial_tx_buffer_tail = 0; // 定义串口发送环形队列尾指针
+uint8_t serial_tx_buffer[TX_RING_BUFFER]; // 定义发送环形队列 (UART和USB共用)
+data uint8_t serial_tx_buffer_head = 0; // 定义发送环形队列头指针
+data volatile uint8_t serial_tx_buffer_tail = 0; // 定义串口(UART)专属发送尾指针
+data volatile uint8_t usb_tx_buffer_tail = 0;    // 定义USB专属发送尾指针
 bool tx_busy;
+bool usb_tx_busy = false;
 
 
 // 返回串口读缓冲区可用字节数。
@@ -72,23 +74,27 @@ void serial_init()
 
 // 写入一个字节到串口发送缓冲区。被主程序调用。
 void serial_write(uint8_t _data) {
-  // 计算下一个头指针，如果已经到达最大值，移到开始，形成环形
   uint8_t next_head = serial_tx_buffer_head + 1;
   if (next_head == TX_RING_BUFFER) { next_head = 0; }
 
-  // 等待，直到缓冲区有空间
-  while (next_head == serial_tx_buffer_tail) {
-    // 代办：重构st_prep_tx_buffer()调用，在长打印期间在这里执行。
+  // 等待，直到UART或处于连接态的USB缓存区腾出空间
+  while (next_head == serial_tx_buffer_tail || 
+        (DeviceState == DEVSTATE_CONFIGURED && next_head == usb_tx_buffer_tail)) {
     if (sys_rt_exec_state & EXEC_RESET) { return; } // 只检查终止防止死循环。
   }
 
-  // 储存数据并向前移动头指针
   serial_tx_buffer[serial_tx_buffer_head] = _data;
   serial_tx_buffer_head = next_head;
-	// 如果发送队列不为空，启动发送
+  
   if(!tx_busy){
     TI = 1;
     tx_busy = true;
+  }
+  
+  // 启动USB异步发送
+  if(DeviceState == DEVSTATE_CONFIGURED && !usb_tx_busy){
+    usb_tx_busy = true;
+    usb_in_callback();
   }
 }
 
@@ -112,28 +118,50 @@ uint8_t serial_read()
 // 数据寄存器为空的中断处理
 void SERIAL_TX_ISR()
 {
-  // 由于环形队列尾指针中断和主程序都会使用，有可能导致数据读取时，指针已经发生了变化，
-  // 存在不稳定性，所以要用临时变量暂存，增加读取时的稳定性。
-  uint8_t tail = serial_tx_buffer_tail; // 临时变量暂存 serial_tx_buffer_tail (为volatile优化)
-  
+  uint8_t tail = serial_tx_buffer_tail;
   uint8_t dat = serial_tx_buffer[tail];
   
-  if (DeviceState == DEVSTATE_CONFIGURED){
-    IE2 &= ~0x80;   //EUSB = 0;
-    usb_write_reg(INDEX, 1);
-    usb_write_reg(FIFO1, dat); // 从缓冲区发送一个字节到USB
-    usb_write_reg(INCSR1, INIPRDY);
-    IE2 |= 0x80;    //EUSB = 1;
-    while(usb_bulk_intr_in_busy());
-  }
   SBUF = dat; // 从缓冲区发送一个字节到串口
 
-  // 更新尾指针位置，如果已经到达顶端，返回初始位置，形成环形
   tail++;
   if (tail == TX_RING_BUFFER) { tail = 0; }
 
   serial_tx_buffer_tail = tail;
 }
+
+// 供底层端点硬件中断调用的 USB 专属批量发射回调
+void usb_in_callback()
+{
+  uint8_t tail = usb_tx_buffer_tail;
+  uint8_t head = serial_tx_buffer_head;
+  uint8_t count = 0;
+  
+  if (DeviceState != DEVSTATE_CONFIGURED) {
+    usb_tx_busy = false;
+    return;
+  }
+
+  usb_write_reg(INDEX, 1);
+  
+  // USB 批量端点最大包长通常建议是 64 字节，一次性塞填！
+  while(tail != head && count < 64) {
+    usb_write_reg(FIFO1, serial_tx_buffer[tail]);
+    
+    tail++;
+    if (tail == TX_RING_BUFFER) { tail = 0; }
+    count++;
+  }
+  
+  usb_tx_buffer_tail = tail;
+  
+  if (count > 0) {
+    usb_write_reg(INCSR1, INIPRDY);
+    usb_tx_busy = true;
+  } else {
+    usb_tx_busy = false;
+  }
+}
+
 
 // 串口数据接收中断处理
 void SERIAL_RX_ISR(uint8_t _data)

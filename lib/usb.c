@@ -47,7 +47,8 @@ void usb_in_ep1()
     {
       usb_write_reg(INCSR1, 0);
     }
-
+    // 回调到串行业务层进行自动批量填装
+    usb_in_callback();
 }
 #endif
 #ifdef EN_EP2IN

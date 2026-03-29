@@ -101,5 +101,6 @@ extern uint8_t InEpState;
 extern uint8_t OutEpState;
 
 extern void usb_out_callback(uint8_t dat);
+extern void usb_in_callback();
 
 #endif
