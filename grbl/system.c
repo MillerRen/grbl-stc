@@ -347,49 +347,49 @@ uint8_t system_check_travel_limits(float *target)
 
 //用于设置和清除Grbl实时执行标志的特殊处理程序。
 void system_set_exec_state_flag(uint8_t mask) {
-  cli();
+  ATOMIC_BLOCK_START
   sys_rt_exec_state |= (mask);
-  sei();
+  ATOMIC_BLOCK_END
 }
 
 void system_clear_exec_state_flag(uint8_t mask) {
-  cli();
+  ATOMIC_BLOCK_START
   sys_rt_exec_state &= ~(mask);
-  sei();
+  ATOMIC_BLOCK_END
 }
 
 void system_set_exec_alarm(uint8_t alarm_code) {
-  cli();
+  ATOMIC_BLOCK_START
   sys_rt_exec_alarm = alarm_code;
-  sei();
+  ATOMIC_BLOCK_END
 }
 
 void system_clear_exec_alarm() {
-  cli();
+  ATOMIC_BLOCK_START
   sys_rt_exec_alarm = 0;
-  sei();
+  ATOMIC_BLOCK_END
 }
 
 void system_set_exec_motion_override_flag(uint8_t mask) {
-  cli();
+  ATOMIC_BLOCK_START
   sys_rt_exec_motion_override |= (mask);
-  sei();
+  ATOMIC_BLOCK_END
 }
 
 void system_set_exec_accessory_override_flag(uint8_t mask) {
-  cli();
+  ATOMIC_BLOCK_START
   sys_rt_exec_accessory_override |= (mask);
-  sei();
+  ATOMIC_BLOCK_END
 }
 
 void system_clear_exec_motion_overrides() {
-  cli();
+  ATOMIC_BLOCK_START
   sys_rt_exec_motion_override = 0;
-  sei();
+  ATOMIC_BLOCK_END
 }
 
 void system_clear_exec_accessory_overrides() {
-  cli();
+  ATOMIC_BLOCK_START
   sys_rt_exec_accessory_override = 0;
-  sei();
+  ATOMIC_BLOCK_END
 }

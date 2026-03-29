@@ -16,9 +16,12 @@
 
 #ifndef cpu_map_h
 #define cpu_map_h
-
 #define sei() EA = 1
 #define cli() EA = 0
+
+// SC8H (8051) 安全的原子操作宏，用于在中断内保存和还原EA状态，防止中断嵌套导致爆栈
+#define ATOMIC_BLOCK_START { unsigned char _ea_save = EA; EA = 0;
+#define ATOMIC_BLOCK_END   EA = _ea_save; }
 
 #define PSTR(s) (const char *)s
 

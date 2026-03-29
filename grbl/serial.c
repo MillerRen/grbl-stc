@@ -158,7 +158,7 @@ void SERIAL_RX_ISR(uint8_t _data)
             }
             break; 
           #ifdef DEBUG
-            case CMD_DEBUG_REPORT: {uint8_t sreg = SREG; cli(); bit_true(sys_rt_exec_debug,EXEC_DEBUG_REPORT); SREG = sreg;} break;
+            case CMD_DEBUG_REPORT: ATOMIC_BLOCK_START bit_true(sys_rt_exec_debug,EXEC_DEBUG_REPORT); ATOMIC_BLOCK_END break;
           #endif
           // 以下为实时覆盖命令
           case CMD_FEED_OVR_RESET: system_set_exec_motion_override_flag(EXEC_FEED_OVR_RESET); break;

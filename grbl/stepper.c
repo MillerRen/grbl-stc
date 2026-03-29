@@ -617,6 +617,7 @@ void stepper_init()
   TF0 = 0;      // 清除TF0标志
   TR0 = 0;      // 在需要时禁用计时器0
   ET0 = 1;      // 启用定时器0溢出中断
+  PT0 = 1;      // 【修复】设置Timer0中断为高优先级，确保其能够抢占Timer1，从而严格保障步进脉冲宽度
 
 #ifdef STEP_PULSE_DELAY
   //   TIMSK0 |= (1<<OCIE0A); //启用定时器0比较匹配中断
