@@ -96,7 +96,7 @@ typedef struct
 #endif
 
   uint8_t execute_step;    // 为每个中断标记步执行。
-  uint8_t step_pulse_time; // 在步进上升后步进脉冲重置时间。
+  uint16_t step_pulse_time; // 在步进上升后步进脉冲重置所需的定时器滴答数。
   uint8_t step_outbits;    // 要输出的下一个步进位
   uint8_t dir_outbits;
 #ifdef ENABLE_DUAL_AXIS
@@ -223,13 +223,10 @@ void st_wake_up()
 // 从设置中初始化步进脉冲定时。此处用于确保重新写入后进行更新。
 #ifdef STEP_PULSE_DELAY
   // 设置方向引脚设置后的总步进脉冲时间。从示波器进行特别计算。
-  st.step_pulse_time = -(((settings.pulse_microseconds + STEP_PULSE_DELAY - 2) * TICKS_PER_MICROSECOND) >> 3);
-  // 设置方向引脚写入和步进命令之间的延迟。
-  //    OCR0A = -(((settings.pulse_microseconds)*TICKS_PER_MICROSECOND) >> 3);
+  st.step_pulse_time = ((settings.pulse_microseconds + STEP_PULSE_DELAY) > 2) ? (settings.pulse_microseconds + STEP_PULSE_DELAY - 2) * TICKS_PER_MICROSECOND : TICKS_PER_MICROSECOND;
 #else // Normal operation
-  // 设置步进脉冲时间。 从振荡器进行特别计算。 减去2可能是为了防止PWM100%会一直输出高电平。
-  // 这里不需要右移3位，是因为定时器0时钟从振荡器获得。
-  st.step_pulse_time = -(((settings.pulse_microseconds - 2) * TICKS_PER_MICROSECOND));
+  // 设置步进脉冲时间所需的刻度数。根据系统时钟频率换算，并减去2us来对冲中断进入开销。
+  st.step_pulse_time = (settings.pulse_microseconds > 2) ? (settings.pulse_microseconds - 2) * TICKS_PER_MICROSECOND : TICKS_PER_MICROSECOND;
 #endif
 
   // 启用步进驱动程序中断,启用后会很快进入中断
@@ -325,9 +322,9 @@ NOP(1); // 啥也不干错开方向与步进脉冲时序，应该用厦门的方
 #endif
 #endif
 
-  // 启用步进脉冲重置定时器0，以便步进器端口重置中断能够在准确settings.pulse.microseconds微秒后重置信号，与主定时器1预分频器无关。
-  TL0 = 255 - st.step_pulse_time; // 重新加载计时器0计数器, 向下计数
-  TH0 = 0xFF;
+  // 启用步进脉冲重置定时器0，以便步进器重置中断能够在准确的时间后重置信号，与定时器1预分频器无关。
+  TL0 = (65536 - st.step_pulse_time) & 0xFF; // 重新加载计时器0计数器, 16位向上计数
+  TH0 = (65536 - st.step_pulse_time) >> 8;
   TR0 = 1; // 开始计时0。全速
 
   busy = true;
