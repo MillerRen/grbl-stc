@@ -349,8 +349,8 @@ NOP(1); // 啥也不干错开方向与步进脉冲时序，应该用厦门的方
 #endif
 
       // 初始化每个步骤的步骤段计时，并加载要执行的步骤数。改变PWM频率。
-      TL1 = 0xff - st.exec_segment->cycles_per_tick & 0xff;
-      TH1 = 0xff - st.exec_segment->cycles_per_tick >> 8;
+      TL1 = (65536 - st.exec_segment->cycles_per_tick) & 0xff;
+      TH1 = (65536 - st.exec_segment->cycles_per_tick) >> 8;
       st.step_count = st.exec_segment->n_step; // 注意：缓慢移动时，有时可能为零。
       // 如果新段启动了新的规划器块，则初始化步进器变量和计数器。
       // 注意：当段数据索引更改时，这表示一个新的规划器块。

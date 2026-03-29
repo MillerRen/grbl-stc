@@ -23,7 +23,7 @@
 #define ATOMIC_BLOCK_START { unsigned char _ea_save = EA; EA = 0;
 #define ATOMIC_BLOCK_END   EA = _ea_save; }
 
-#define PSTR(s) (const char *)s
+#define PSTR(s) ((const char code *)(s))
 
 #define F_CPU 24000000L
 

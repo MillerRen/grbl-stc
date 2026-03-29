@@ -15,11 +15,10 @@
 #ifndef print_h
 #define print_h
 
-#define printPgmString printString
-
 void printString(const char *s);
 
-// void printPgmString(const char *s);
+// 针对存储在 8051 Flash (code) 的专用优化版输出函数
+void printPgmString(const char code *s);
 
 void printInteger(long n);
 

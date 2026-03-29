@@ -40,7 +40,7 @@ int memcpy_from_eeprom_with_checksum (char *destination, uint16_t source, uint16
     unsigned char dat, check_sum = 0;
     for(; size>0; size--) {
         dat = eeprom_get_char(source++);
-        check_sum = (check_sum << 1) || (check_sum >> 7);
+        check_sum = (check_sum << 1) | (check_sum >> 7);
         check_sum += dat;
         *(destination++) = dat;
     }
@@ -50,7 +50,7 @@ int memcpy_from_eeprom_with_checksum (char *destination, uint16_t source, uint16
 void memcpy_to_eeprom_with_checksum (uint16_t destination, char *source, uint16_t size) {
     unsigned char check_sum = 0;
     for(; size>0; size--) {
-        check_sum = (check_sum << 1) || (check_sum >> 7);
+        check_sum = (check_sum << 1) | (check_sum >> 7);
         check_sum += *source;
         eeprom_put_char(destination++, *(source++));
     }

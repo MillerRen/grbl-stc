@@ -22,11 +22,13 @@ void printString(const char *s)
 }
 
 
-// //打印存储在PGM内存中的字符串
-// void printPgmString(const char *s)
-// {
-//   printString(s);
-// }
+// 打印存储在 Flash 内存 (code) 中的字符串
+// 通过特定 code 指针，编译器会翻译为高效的 MOVC 常量寻址，不会把资源搬到通用内存
+void printPgmString(const char code *s)
+{
+  while (*s)
+    serial_write(*s++);
+}
 
 
 // void printIntegerInBase(unsigned long n, unsigned long base)
