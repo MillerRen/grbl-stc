@@ -1,38 +1,54 @@
+//
+// !!! WARNING !!! AUTO-GENERATED FILE!
+// PLEASE DO NOT MODIFY IT AND USE "platformio.ini":
+// https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags
+//
 {
     "configurations": [
         {
-            "name": "Target 1",
+            "name": "PlatformIO",
             "includePath": [
-                "d:\\source\\grbl_stc8h8k64u\\grbl",
-                "d:\\source\\grbl_stc8h8k64u\\lib",
-                "C:\\Keil_v5\\C51\\INC"
+                "/Users/renyufei/CNC/grbl-stc",
+                "/Users/renyufei/CNC/grbl-stc/grbl",
+                "/Users/renyufei/CNC/grbl-stc/lib",
+                ""
             ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "/Users/renyufei/CNC/grbl-stc",
+                    "/Users/renyufei/CNC/grbl-stc/grbl",
+                    "/Users/renyufei/CNC/grbl-stc/lib",
+                    ""
+                ]
+            },
             "defines": [
-                "__C51__",
-                "__VSCODE_C51__",
-                "reentrant=",
-                "compact=",
-                "small=",
-                "large=",
-                "data=",
-                "idata=",
-                "pdata=",
-                "bdata=",
-                "xdata=",
-                "code=",
-                "bit=char",
-                "sbit=char",
-                "sfr=char",
-                "sfr16=int",
-                "sfr32=int",
-                "interrupt=",
-                "using=",
-                "_at_=",
-                "_priority_=",
-                "_task_="
+                "F_CPU=24000000L",
+                "HEAP_SIZE=128",
+                "PLATFORMIO=60118",
+                "STC8H8KXXU",
+                "STC8H8K64U",
+                "NAKED_ARCH_MCS51",
+                "NAKED_MCS51_STC8H8KXXU",
+                "data=__data",
+                "xdata=__xdata",
+                "idata=__idata",
+                "pdata=__pdata",
+                "bdata=__bdata",
+                "code=__code",
+                "bit=bool",
+                "sbit=bool",
+                "sfr=unsigned",
+                "interrupt=__interrupt",
+                "using=__using",
+                "reentrant=__reentrant",
+                ""
             ],
-            "intelliSenseMode": "${default}",
-            "cStandard": "c89"
+            "compilerPath": "/Users/renyufei/.platformio/packages/toolchain-sdcc/bin/sdcc",
+            "compilerArgs": [
+                "-mmcs51",
+                ""
+            ]
         }
     ],
     "version": 4

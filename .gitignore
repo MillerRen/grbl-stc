@@ -3,3 +3,6 @@ Listings/
 build
 *.log
 *.lock
+.vscode/
+.pio/
+.cache/
