@@ -1,7 +1,7 @@
 #ifndef __USB_H__
 #define __USB_H__
 
-#include <stc8h.H>
+#include "stc8h.h"
 #include "stdint.h"
 #include "stdbool.h"
 #include "usb_config.h"

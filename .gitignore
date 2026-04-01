@@ -3,6 +3,7 @@ Listings/
 build
 *.log
 *.lock
+.DS_Store
 .vscode/
 .pio/
 .cache/

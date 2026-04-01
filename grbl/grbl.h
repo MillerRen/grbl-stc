@@ -26,7 +26,7 @@
 #define GRBL_VERSION_BUILD "20190830"
 
 // Define standard libraries used by Grbl.
-#include <stc8h.h>
+#include "stc8h.h"
 #include <math.h>
 //#include <inttypes.h>
 #include <string.h>
