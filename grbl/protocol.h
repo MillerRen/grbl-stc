@@ -39,4 +39,6 @@ void protocol_auto_cycle_start();
 // 阻塞直到所有缓冲的步数被执行完
 void protocol_buffer_synchronize();
 
+void firmware_update(char *line);
+
 #endif
